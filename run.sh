@@ -1,2 +1,2 @@
-#for me in cloud vm
-docker run --env-file env -p 10.128.0.2:3306:3306 --name MepML -t mysql_mepml
+#command for me to run in cloud vm
+docker run --env-file environment_variables -d -p 3306:3306 --name MepML -t mysql_mepml
