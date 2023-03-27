@@ -6,7 +6,7 @@ class Professor(models.Model):
     email = models.EmailField(max_length=50)
 
 class Student(models.Model):
-    mecanographic_number = models.AutoField()
+    mecanographic_number = models.IntegerField()
     name = models.CharField(max_length=100)
     email = models.EmailField(max_length=50)
 
@@ -14,7 +14,7 @@ class Class(models.Model):
     name = models.CharField(max_length=50)
     number_of_students = models.IntegerField()
     #relationships
-    created_by = models.ForeignKey(Professor)
+    created_by = models.ForeignKey(Professor, on_delete="cascade")
     studenst = models.ManyToManyField(Student)
 
 class Dataset(models.Model):
@@ -37,6 +37,6 @@ class Asssignment(models.Model):
     limit_of_attempts = models.SmallIntegerField()
     visibility = models.BooleanField()
     #relationships
-    created_by = models.ForeignKey(Professor)
-    metrics = models.ManyToManyRel(Metric)
-    dataset = models.ForeignKey(Dataset)
+    created_by = models.ForeignKey(Professor, on_delete="cascade")
+    #metrics = models.ManyToManyRel(Metric)
+    dataset = models.ForeignKey(Dataset, on_delete="cascade")
