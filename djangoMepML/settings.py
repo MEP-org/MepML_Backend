@@ -76,10 +76,18 @@ WSGI_APPLICATION = 'djangoMepML.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+
+    'default': {  
+        'ENGINE': 'django.db.backends.mysql',  
+        'NAME': 'my_mep_ml',  
+        'USER': 'pi',  
+        'PASSWORD': 'mep_ml',  
+        'HOST': '34.170.116.176',  
+        'PORT': '3306',  
+        'OPTIONS': {  
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"  
+        }  
+    }  
 }
 
 # Password validation
