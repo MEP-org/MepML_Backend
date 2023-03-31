@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'MepML',
 ]
 
 # Middleware framework
@@ -76,11 +78,18 @@ WSGI_APPLICATION = 'djangoMepML.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+
+    'default': {  
+        'ENGINE': 'django.db.backends.mysql',  
+        'NAME': 'my_mep_ml',  
+        'USER': 'root',  
+        'PASSWORD': 'mep_ml',  
+        'HOST': '34.170.116.176',  
+        'PORT': '3306'
+    }  
 }
+
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators

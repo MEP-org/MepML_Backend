@@ -1,4 +1,7 @@
 # MepML
+
+Errors may occur when installing *mysqlclient*
+
 ### IMPORTANT: Project branches
 
 ```main```: production code.
