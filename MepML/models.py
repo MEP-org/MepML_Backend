@@ -1,5 +1,8 @@
 from django.db import models
+from django.contrib.auth.models import User
 
+
+user_id = models.IntegerField(default=0)
 
 class Professor(models.Model):
     name = models.CharField(max_length=100)
@@ -16,8 +19,8 @@ class Class(models.Model):
     name = models.CharField(max_length=50)
     number_of_students = models.IntegerField()
     # relationships
-    created_by = models.ForeignKey(Professor, on_delete="cascade")
-    studenst = models.ManyToManyField(Student)
+    created_by = models.ForeignKey(Professor, on_delete=models.CASCADE)
+    students = models.ManyToManyField(Student)
 
 
 class Dataset(models.Model):
@@ -42,6 +45,6 @@ class Asssignment(models.Model):
     limit_of_attempts = models.SmallIntegerField()
     visibility = models.BooleanField()
     # relationships
-    created_by = models.ForeignKey(Professor, on_delete="cascade")
+    created_by = models.ForeignKey(Professor, on_delete=models.CASCADE)
     # metrics = models.ManyToManyRel(Metric)
-    dataset = models.ForeignKey(Dataset, on_delete="cascade")
+    dataset = models.ForeignKey(Dataset, on_delete=models.CASCADE)
