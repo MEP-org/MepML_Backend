@@ -4,13 +4,16 @@ from django.contrib.auth.models import User
 
 user_id = models.IntegerField(default=0)
 
+
 class Professor(models.Model):
+    id = models.AutoField(primary_key=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     email = models.EmailField()
 
 
 class Student(models.Model):
+    id = models.AutoField(primary_key=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     nmec = models.IntegerField()
     name = models.CharField(max_length=100)
@@ -18,6 +21,7 @@ class Student(models.Model):
 
 
 class Class(models.Model):
+    id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50)
     number_of_students = models.IntegerField()
     # relationships
@@ -37,6 +41,7 @@ class Dataset(models.Model):
 
 
 class Metric(models.Model):
+    id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=20)
     path_to_function = models.CharField(max_length=200)
 
