@@ -4,23 +4,32 @@ from django.contrib.auth.models import User
 
 user_id = models.IntegerField(default=0)
 
+
 class Professor(models.Model):
+    id = models.AutoField(primary_key=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
-    email = models.EmailField(max_length=50)
+    email = models.EmailField()
 
 
 class Student(models.Model):
-    mecanographic_number = models.IntegerField()
+    id = models.AutoField(primary_key=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    nmec = models.IntegerField()
     name = models.CharField(max_length=100)
-    email = models.EmailField(max_length=50)
+    email = models.EmailField()
 
 
 class Class(models.Model):
+    id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50)
     number_of_students = models.IntegerField()
     # relationships
     created_by = models.ForeignKey(Professor, on_delete=models.CASCADE)
     students = models.ManyToManyField(Student)
+
+    class Meta:
+        verbose_name_plural = "Classes"
 
 
 class Dataset(models.Model):
@@ -32,11 +41,12 @@ class Dataset(models.Model):
 
 
 class Metric(models.Model):
+    id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=20)
     path_to_function = models.CharField(max_length=200)
 
 
-class Asssignment(models.Model):
+class Exercise(models.Model):
     title = models.CharField(max_length=30)
     subtitle = models.CharField(max_length=30)
     description = models.CharField(max_length=30)
@@ -46,5 +56,5 @@ class Asssignment(models.Model):
     visibility = models.BooleanField()
     # relationships
     created_by = models.ForeignKey(Professor, on_delete=models.CASCADE)
-    # metrics = models.ManyToManyRel(Metric)
+    metrics = models.ManyToManyField(Metric)
     dataset = models.ForeignKey(Dataset, on_delete=models.CASCADE)
