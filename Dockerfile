@@ -1,13 +1,21 @@
-FROM mysql:latest
+# base image  
+FROM python:3.8   
 
-ARG MYSQL_DATABASE
-ARG MYSQL_USER
-ARG MYSQL_PASSWORD
-ARG MYSQL_ROOT_PASSWORD
+ENV PYTHONUNBUFFERED 1
 
-ENV MYSQL_DATABASE=$MYSQL_DATABASE
-ENV MYSQL_USER=$MYSQL_USER
-ENV MYSQL_PASSWORD=$MYSQL_PASSWORD
-ENV MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD
+COPY requirements.txt requirements.txt
 
-EXPOSE 3306
+# install dependencies  
+RUN pip install --upgrade pip  
+
+# run this command to install all dependencies  
+RUN pip install -r requirements.txt  
+
+COPY . code
+WORKDIR /code
+
+# port where the Django app runs  
+EXPOSE 8000  
+
+# start server  
+CMD ["python3", "manage.py", "runserver", "0.0.0.0:8000", "--settings=djangoMepML.production_settings"]

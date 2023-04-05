@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
+user_id = models.IntegerField(default=0)
+
 class Professor(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
@@ -20,7 +22,7 @@ class Class(models.Model):
     number_of_students = models.IntegerField()
     # relationships
     created_by = models.ForeignKey(Professor, on_delete=models.CASCADE)
-    studenst = models.ManyToManyField(Student)
+    students = models.ManyToManyField(Student)
 
     class Meta:
         verbose_name_plural = "Classes"
