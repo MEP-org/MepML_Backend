@@ -17,7 +17,7 @@ class StudentSerializer(serializers.ModelSerializer):
 class ClassSerializer(serializers.ModelSerializer):
     class Meta:
         model = Class
-        fields = ["name", "number_of_students", "created_by", "students"]
+        fields = ["name", "created_by", "students", "image"]
 
 
 # Dataset will be serialized in the ExerciseSerializer
