@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+# User email is unique
+User._meta.get_field('email')._unique = True
 
 user_id = models.IntegerField(default=0)
 
@@ -9,24 +11,24 @@ class Professor(models.Model):
     id = models.AutoField(primary_key=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
-    email = models.EmailField()
+    email = models.EmailField(unique=True)
 
 
 class Student(models.Model):
     id = models.AutoField(primary_key=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    nmec = models.IntegerField()
+    nmec = models.IntegerField(unique=True)
     name = models.CharField(max_length=100)
-    email = models.EmailField()
+    email = models.EmailField(unique=True)
 
 
 class Class(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50)
-    number_of_students = models.IntegerField()
     # relationships
     created_by = models.ForeignKey(Professor, on_delete=models.CASCADE)
-    students = models.ManyToManyField(Student)
+    students = models.ManyToManyField(Student, blank=True)
+    image = models.ImageField(upload_to='Class_images/', blank=True)
 
     class Meta:
         verbose_name_plural = "Classes"
