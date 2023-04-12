@@ -12,18 +12,46 @@
 
   
 ### For professors and students:
-login
-GET              /public_exercises
+POST             /login
+
+https://mep-org.github.io/Prototype/#/professor/publicExercises
++ https://mep-org.github.io/Prototype/#/student/publicExercises
+GET              /public_exercises?filter1=...&filter2=...&page={pg}
+-----> List<ExercisePreview> + List<Professor_name_id> + pagination stuff
 
 ### For professors:
-GET/POST         /professors/888/classes
-GET/PUT/DELETE   /professors/888/classes/3
-GET/POST         /professors/888/exercises
-GET/PUT/DELETE   /professors/888/exercises/3                    [includes ranking]
-GET              /professors/888/exercises/3/solutions/102534
-GET/POST         /professors/888/metrics
-GET/POST/DELETE  /professors/888/metrics/3
+https://mep-org.github.io/Prototype/#/professor/classes:
+  - GET/POST         /professors/888/classes -----> List<ClassPreview>
+
+https://mep-org.github.io/Prototype/#/professor/classes/1
+  - GET/PUT/DELETE   /professors/888/classes/3 -----> Class
+
+https://mep-org.github.io/Prototype/#/professor/exercises
++ https://mep-org.github.io/Prototype/#/professor/exercises/add
+  - GET/POST         /professors/888/exercises -----> List<ExercisePreview> + List<Class_name_id>
+
+https://mep-org.github.io/Prototype/#/professor/exercises/1
+  - GET/PUT/DELETE   /professors/888/exercises/3 -----> Exercise + List<Class_name_id> + List<Metric_name_id> + [includes ranking]
+  - GET              /professors/888/exercises/3/solutions/102534 (standby)
+
+https://mep-org.github.io/Prototype/#/professor/metrics
+  - GET/POST         /professors/888/metrics -----> List<Other_Metrics> + List<My_Metrics>
+
+(URL em standby)https://mep-org.github.io/Prototype/#/professor/metrics/1
+  - GET/PUT/DELETE  /professors/888/metrics/3
 
 ### For students:
-GET/POST         /students/102534/assignments
-GET/PUT/DELETE   /students/102534/assignments/3                 [includes ranking]
+https://mep-org.github.io/Prototype/#/student/home
+  - GET              /students/102534/classes -----> List<ClassPreview>
+  - GET              /students/102534/stats -----> Student_#doneExs_#currentExs_#nextEx_#rankLastEx
+
+https://mep-org.github.io/Prototype/#/student/ViewClass:
+https://mep-org.github.io/Prototype/#/professor/classes/1
+  - GET   /students/102534/classes/3 -----> Class
+
+https://mep-org.github.io/Prototype/#/student/assignments
+  - GET              /students/102534/assignments -----> List<ExercisePreview>
+
+https://mep-org.github.io/Prototype/#/student/assignments/1
+  - GET/PUT/DELETE   /students/102534/assignments/3 -----> Exercise + [includes ranking]
+  - GET              /students/102534/assignments/3/solution
