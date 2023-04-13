@@ -23,7 +23,7 @@ https://mep-org.github.io/Prototype/#/professor/exercises
 https://mep-org.github.io/Prototype/#/professor/exercises/1
   - GET              /professors/888/exercises/3 -----> Exercise + List<Class_name_id> + List<Metric_name_id> + [includes ranking]
   - PUT/DELETE       /professors/888/exercises/3     {Exercise with links for datasets}
-  - GET              /professors/888/exercises/3/solutions/102534 (not supported in the prototype) -----> link to solution.py
+  - GET              /professors/888/exercises/3/solutions (not supported in the prototype) -----> link to solution.py
 
 https://mep-org.github.io/Prototype/#/professor/metrics
   - GET              /professors/888/metrics -----> List<Other_Metrics> + List<My_Metrics>
