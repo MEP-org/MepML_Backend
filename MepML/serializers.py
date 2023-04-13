@@ -20,6 +20,17 @@ class ClassSerializer(serializers.ModelSerializer):
         fields = ["name", "created_by", "students", "image"]
 
 
+class ClassPreviewSerializer(serializers.ModelSerializer):
+    num_students = serializers.SerializerMethodField()
+
+    def get_num_students(self, obj):
+        return obj.students.count()
+
+    class Meta:
+        model = Class
+        fields = ["id", "name", "num_students", "image"]
+
+
 # Dataset will be serialized in the ExerciseSerializer
 
 class MetricSerializer(serializers.ModelSerializer):
