@@ -51,7 +51,8 @@ class Dataset(models.Model):
 class Metric(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=20)
-    path_to_function = models.CharField(max_length=200)
+    metric_file = models.FileField(upload_to='Metrics/')
+    created_by = models.ForeignKey(Professor, on_delete=models.CASCADE)
 
 
 class Exercise(models.Model):
@@ -60,7 +61,7 @@ class Exercise(models.Model):
     subtitle = models.CharField(max_length=30)
     description = models.CharField(max_length=100)
     evaluation = models.CharField(max_length=100)
-    publish_date = models.DateTimeField()
+    publish_date = models.DateTimeField(auto_now_add=True)
     deadline = models.DateTimeField()
     limit_of_attempts = models.SmallIntegerField()
     visibility = models.BooleanField()
