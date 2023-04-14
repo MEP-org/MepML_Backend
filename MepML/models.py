@@ -30,9 +30,14 @@ class Class(models.Model):
 
 class Dataset(models.Model):
     id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=30)
-    file = models.FileField(upload_to='Datasets/')
-    upload_date = models.DateTimeField(auto_now_add=True)
+    
+    train_name = models.CharField(max_length=30)
+    train_dataset = models.FileField(upload_to='Datasets/Train/')
+    train_upload_date = models.DateTimeField(auto_now_add=True)
+
+    test_name = models.CharField(max_length=30)
+    test_dataset = models.FileField(upload_to='Datasets/Test/')
+    test_upload_date = models.DateTimeField(auto_now_add=True)
     
 
 
@@ -58,8 +63,6 @@ class Exercise(models.Model):
     metrics = models.ManyToManyField(Metric)
     dataset = models.ForeignKey(Dataset, on_delete=models.CASCADE)
     created_by = models.ForeignKey(Professor, on_delete=models.CASCADE)
-    train_dataset = models.ForeignKey(Dataset, on_delete=models.CASCADE)
-    test_dataset = models.ForeignKey(Dataset, on_delete=models.CASCADE)
 
 
 class Result(models.Model):
