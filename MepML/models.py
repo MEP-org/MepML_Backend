@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class User(models.Model):
     nmec = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=50)
@@ -40,7 +41,6 @@ class Dataset(models.Model):
     test_upload_date = models.DateTimeField(auto_now_add=True)
     
 
-
 class Metric(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=20)
@@ -74,6 +74,7 @@ class Result(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     exercise = models.ManyToOneRel(Exercise, on_delete=models.CASCADE)
     metric = models.ForeignKey(Metric, on_delete=models.CASCADE)
+
 
 class CodeSubmission(models.Model):
     id = models.AutoField(primary_key=True)
