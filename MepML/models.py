@@ -1,45 +1,44 @@
 from django.db import models
-from django.contrib.auth.models import User
 
-# User email is unique
-User._meta.get_field('email')._unique = True
-
-user_id = models.IntegerField(default=0)
+class User(models.Model):
+    nmec = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=50)
+    email = models.EmailField(max_length=50, unique=True)
 
 
 class Professor(models.Model):
     id = models.AutoField(primary_key=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    name = models.CharField(max_length=100)
-    email = models.EmailField(unique=True)
 
 
 class Student(models.Model):
     id = models.AutoField(primary_key=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    nmec = models.IntegerField(unique=True)
-    name = models.CharField(max_length=100)
-    email = models.EmailField(unique=True)
 
 
 class Class(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50)
+    image = models.ImageField(upload_to='Class_images/', blank=True)
     # relationships
     created_by = models.ForeignKey(Professor, on_delete=models.CASCADE)
     students = models.ManyToManyField(Student, blank=True)
-    image = models.ImageField(upload_to='Class_images/', blank=True)
 
     class Meta:
         verbose_name_plural = "Classes"
 
 
 class Dataset(models.Model):
-    path_to_train_file = models.CharField(max_length=200)
-    path_to_test_file = models.CharField(max_length=200)
-    number_of_features = models.IntegerField()
-    description = models.CharField(max_length=100)
-    is_public = models.BooleanField()
+    id = models.AutoField(primary_key=True)
+    
+    train_name = models.CharField(max_length=30)
+    train_dataset = models.FileField(upload_to='Datasets/Train/')
+    train_upload_date = models.DateTimeField(auto_now_add=True)
+
+    test_name = models.CharField(max_length=30)
+    test_dataset = models.FileField(upload_to='Datasets/Test/')
+    test_upload_date = models.DateTimeField(auto_now_add=True)
+    
 
 
 class Metric(models.Model):
@@ -49,14 +48,40 @@ class Metric(models.Model):
 
 
 class Exercise(models.Model):
+    id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=30)
     subtitle = models.CharField(max_length=30)
-    description = models.CharField(max_length=30)
-    start_date = models.DateTimeField()
+    description = models.CharField(max_length=100)
+    evaluation = models.CharField(max_length=100)
+    publish_date = models.DateTimeField()
     deadline = models.DateTimeField()
     limit_of_attempts = models.SmallIntegerField()
     visibility = models.BooleanField()
+
     # relationships
-    created_by = models.ForeignKey(Professor, on_delete=models.CASCADE)
+    students_class = models.ForeignKey(Class, on_delete=models.CASCADE)
     metrics = models.ManyToManyField(Metric)
     dataset = models.ForeignKey(Dataset, on_delete=models.CASCADE)
+    created_by = models.ForeignKey(Professor, on_delete=models.CASCADE)
+
+
+class Result(models.Model):
+    id = models.AutoField(primary_key=True)
+    score = models.FloatField()
+    date = models.DateTimeField(auto_now_add=True)
+
+    # relationships
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    exercise = models.ManyToOneRel(Exercise, on_delete=models.CASCADE)
+    metric = models.ForeignKey(Metric, on_delete=models.CASCADE)
+
+class CodeSubmission(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=30)
+    result_submission = models.FileField(upload_to='results/')
+    code_submission = models.FileField(upload_to='code_submissions/')
+    submission_date = models.DateTimeField(auto_now_add=True)
+
+    # relationships
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    Exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)
