@@ -14,7 +14,7 @@ class Professor(models.Model):
 class Student(models.Model):
     id = models.AutoField(primary_key=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    
+
 
 class Class(models.Model):
     id = models.AutoField(primary_key=True)
@@ -66,17 +66,17 @@ class Result(models.Model):
     id = models.AutoField(primary_key=True)
     score = models.FloatField()
     date = models.DateTimeField(auto_now_add=True)
-    submission_file = models.FileField(upload_to='results/')
 
     # relationships
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     exercise = models.ManyToOneRel(Exercise, on_delete=models.CASCADE)
-    metric = models.ManyToManyField(Metric)
+    metric = models.ForeignKey(Metric, on_delete=models.CASCADE)
 
 class CodeSubmission(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=30)
-    code = models.FileField(upload_to='code_submissions/')
+    result_submission = models.FileField(upload_to='results/')
+    code_submission = models.FileField(upload_to='code_submissions/')
     submission_date = models.DateTimeField(auto_now_add=True)
 
     # relationships
