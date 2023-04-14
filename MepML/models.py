@@ -1,9 +1,16 @@
 from django.db import models
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
-class User(models.Model):
+class User(AbstractBaseUser):
+    email = models.EmailField(max_length=50, unique=True)
     nmec = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=50)
-    email = models.EmailField(max_length=50, unique=True)
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['nmec', 'name']
+
+    def __str__(self):
+        return self.name
 
 
 class Professor(models.Model):
@@ -72,7 +79,7 @@ class Result(models.Model):
 
     # relationships
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
-    exercise = models.ManyToOneRel(Exercise, on_delete=models.CASCADE)
+    exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)
     metric = models.ForeignKey(Metric, on_delete=models.CASCADE)
 
 class CodeSubmission(models.Model):
