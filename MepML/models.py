@@ -42,7 +42,7 @@ class Metric(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=20)
     description = models.CharField(max_length=300, blank=True)
-    created_by = models.ForeignKey(Professor, on_delete=models.CASCADE)
+    created_by = models.ForeignKey(Professor, on_delete=models.CASCADE, null=True, blank=True)
     source_code = models.FileField(upload_to='metrics/')
 
 
