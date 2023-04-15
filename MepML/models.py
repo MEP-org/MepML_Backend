@@ -41,6 +41,7 @@ class Dataset(models.Model):
 class Metric(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=20)
+    description = models.CharField(max_length=300, blank=True)
     path_to_function = models.CharField(max_length=200)
 
 
