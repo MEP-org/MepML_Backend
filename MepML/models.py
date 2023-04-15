@@ -50,14 +50,15 @@ class Dataset(models.Model):
 class Metric(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=20)
-    path_to_function = models.CharField(max_length=200)
+    description_x = models.CharField(max_length=255)
+    created_by = models.OneToOneField(Professor, on_delete=models.CASCADE)
+    source_code = models.FileField(upload_to='Metrics/')
 
 
 class Exercise(models.Model):
     id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=30)
     subtitle = models.CharField(max_length=30)
-    description = models.CharField(max_length=100)
     evaluation = models.CharField(max_length=100)
     publish_date = models.DateTimeField()
     deadline = models.DateTimeField()

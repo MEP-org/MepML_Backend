@@ -20,7 +20,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from MepML import views
-from MepML.webservices import ws_classes, ws_manage_class
+from MepML.webservices import ws_classes, ws_manage_class, ws_metrics
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -28,6 +28,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path("professors/<int:prof_id>/classes", ws_classes.handle),
     path("professors/<int:prof_id>/classes/<int:class_id>", ws_manage_class.handle),
+    path("professors/<int:prof_id>/metrics", ws_metrics.handle),
     path("apitest/", views.getAll, name="getAll"),
     path("getclass/<int:class_id>", views.get_class, name="get_class"),
     path("updateclass/<int:class_id>", views.update_class, name="update_class"),

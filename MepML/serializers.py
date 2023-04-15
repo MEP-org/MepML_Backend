@@ -36,7 +36,13 @@ class ClassPreviewSerializer(serializers.ModelSerializer):
 class MetricSerializer(serializers.ModelSerializer):
     class Meta:
         model = Metric
-        fields = ["name", "path_to_function"]
+        fields = ["name", "description", "created_by", "source_code"]
+
+
+class MetricPreviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Metric
+        fields = ["id", "name", "description"]
 
 
 class ExerciseSerializer(serializers.ModelSerializer):

@@ -26,7 +26,8 @@ https://mep-org.github.io/Prototype/#/professor/exercises/1
   - GET              /professors/888/exercises/3/solutions (not supported in the prototype) -----> link to solution.py
 
 https://mep-org.github.io/Prototype/#/professor/metrics
-  - GET              /professors/888/metrics -----> List<Other_Metrics> + List<My_Metrics>
+  - GET              /professors/888/metrics -----> List<Other_Metrics_Preview> + List<My_Metrics_Preview>
+  - POST             /professors/888/metrics        {Metric}
 
 (Future URL) https://mep-org.github.io/Prototype/#/professor/metrics/1
   - GET              /professors/888/metrics/3 -----> Metric
