@@ -91,3 +91,9 @@ def update_class(request, class_id):
         return Response(invalid_data_dict, status=status.HTTP_400_BAD_REQUEST)
 
     return Response(status=status.HTTP_200_OK)
+
+
+@api_view(["GET"])
+def public_exercises(request):
+    Exercise.objects.all()
+    

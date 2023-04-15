@@ -31,4 +31,5 @@ urlpatterns = [
     path("apitest/", views.getAll, name="getAll"),
     path("getclass/<int:class_id>", views.get_class, name="get_class"),
     path("updateclass/<int:class_id>", views.update_class, name="update_class"),
+    path("public_exercises/", views.public_exercises, name="public_exercises"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
