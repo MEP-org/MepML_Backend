@@ -28,7 +28,7 @@ class Class(models.Model):
 
 class Dataset(models.Model):
     id = models.AutoField(primary_key=True)
-    
+
     train_name = models.CharField(max_length=30)
     train_dataset = models.FileField(upload_to='datasets/train/')
     train_upload_date = models.DateTimeField(auto_now_add=True)
@@ -36,7 +36,7 @@ class Dataset(models.Model):
     test_name = models.CharField(max_length=30)
     test_dataset = models.FileField(upload_to='datasets/test/')
     test_upload_date = models.DateTimeField(auto_now_add=True)
-    
+
 
 class Metric(models.Model):
     id = models.AutoField(primary_key=True)
@@ -49,6 +49,7 @@ class Exercise(models.Model):
     id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=30)
     subtitle = models.CharField(max_length=30)
+    description = models.CharField(max_length=100)
     evaluation = models.CharField(max_length=100)
     publish_date = models.DateTimeField()
     deadline = models.DateTimeField()
