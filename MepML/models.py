@@ -1,32 +1,23 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
-
-class User(AbstractBaseUser):
-    email = models.EmailField(max_length=50, unique=True)
-    nmec = models.IntegerField(primary_key=True)
-    name = models.CharField(max_length=50)
-
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['nmec', 'name']
-
-    def __str__(self):
-        return self.name
+from django.contrib.auth.models import User
 
 
 class Professor(models.Model):
     id = models.AutoField(primary_key=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    nmec = models.CharField(max_length=15, unique=True)
 
 
 class Student(models.Model):
     id = models.AutoField(primary_key=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    nmec = models.CharField(max_length=15, unique=True)
 
 
 class Class(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50)
-    image = models.ImageField(upload_to='Class_images/', blank=True)
+    image = models.ImageField(upload_to='classes_images/', blank=True)
     # relationships
     created_by = models.ForeignKey(Professor, on_delete=models.CASCADE)
     students = models.ManyToManyField(Student, blank=True)
@@ -39,11 +30,11 @@ class Dataset(models.Model):
     id = models.AutoField(primary_key=True)
     
     train_name = models.CharField(max_length=30)
-    train_dataset = models.FileField(upload_to='Datasets/Train/')
+    train_dataset = models.FileField(upload_to='datasets/train/')
     train_upload_date = models.DateTimeField(auto_now_add=True)
 
     test_name = models.CharField(max_length=30)
-    test_dataset = models.FileField(upload_to='Datasets/Test/')
+    test_dataset = models.FileField(upload_to='datasets/test/')
     test_upload_date = models.DateTimeField(auto_now_add=True)
     
 
