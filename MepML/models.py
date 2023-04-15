@@ -28,7 +28,7 @@ class Class(models.Model):
 
 class Dataset(models.Model):
     id = models.AutoField(primary_key=True)
-    
+
     train_name = models.CharField(max_length=30)
     train_dataset = models.FileField(upload_to='datasets/train/')
     train_upload_date = models.DateTimeField(auto_now_add=True)
@@ -36,12 +36,13 @@ class Dataset(models.Model):
     test_name = models.CharField(max_length=30)
     test_dataset = models.FileField(upload_to='datasets/test/')
     test_upload_date = models.DateTimeField(auto_now_add=True)
-    
+
 
 class Metric(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=20)
     description = models.CharField(max_length=300, blank=True)
+    created_by = models.ForeignKey(Professor, on_delete=models.CASCADE, null=True, blank=True)
     source_code = models.FileField(upload_to='metrics/')
 
 
