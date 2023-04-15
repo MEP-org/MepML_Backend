@@ -41,9 +41,8 @@ class Dataset(models.Model):
 class Metric(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=20)
-    description_x = models.CharField(max_length=255)
-    created_by = models.OneToOneField(Professor, on_delete=models.CASCADE)
-    source_code = models.FileField(upload_to='Metrics/')
+    description = models.CharField(max_length=300, blank=True)
+    path_to_function = models.CharField(max_length=200)
 
 
 class Exercise(models.Model):
