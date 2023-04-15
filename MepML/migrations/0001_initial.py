@@ -57,7 +57,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(primary_key=True, serialize=False)),
                 ('name', models.CharField(max_length=20)),
                 ('description', models.CharField(max_length=300, blank=True)),
-                ('path_to_function', models.CharField(max_length=200)),
+                ('source_code', models.FileField(default='', upload_to='metrics/')),
             ],
         ),
         migrations.CreateModel(
