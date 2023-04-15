@@ -57,6 +57,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(primary_key=True, serialize=False)),
                 ('name', models.CharField(max_length=20)),
                 ('description', models.CharField(max_length=300, blank=True)),
+                ('created_by', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='MepML.professor')),
                 ('source_code', models.FileField(default='', upload_to='metrics/')),
             ],
         ),
