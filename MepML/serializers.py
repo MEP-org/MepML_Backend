@@ -96,11 +96,43 @@ class ExerciseSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 # ------------------------------ Result Serializers ------------------------------
-# class ResultSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Result
-#         fields = ['id', "score", "date", "student", "exercise", "metric"]
+class ProfessorExerciseResultSerializer(serializers.ModelSerializer):
+    student = StudentSerializer()
+    metric = MetricSerializer()
 
+    class Meta:
+        model = Result
+        fields = ['id', "score", "date", "student", "metric"]
+
+
+class ProfessorExerciseSerializer(serializers.Serializer):
+    exercise = ExerciseSerializer()
+    results = ProfessorExerciseResultSerializer(many=True)
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        return {
+            'exercise': data['exercise'],
+            'results': data['results'],
+        }
+    
+
+class ProfessorExercisesClassSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Class
+        fields = ['id', "name"]
+
+
+class ProfessorExercisesSerializer(serializers.ModelSerializer):
+    exercises = ExerciseSerializer(many=True)
+    classes = ProfessorExercisesClassSerializer(many=True)
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        return {
+            'exercises': data['exercises'],
+            'classes': data['classes'],
+        }
 
 
 
