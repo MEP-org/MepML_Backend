@@ -8,21 +8,21 @@ https://mep-org.github.io/Prototype/#/professor/publicExercises
 
 ## For professors:
 https://mep-org.github.io/Prototype/#/professor/classes:
-  - GET         /professors/888/classes -----> List<ClassPreview>
-  - POST        /professors/888/classes        {Class with image link}
+  - [DONE] GET         /professors/888/classes -----> List<ClassPreview>
+  - [DONE] POST        /professors/888/classes        {Class}
 
 https://mep-org.github.io/Prototype/#/professor/classes/1
-  - GET          /professors/888/classes/3 -----> Class
-  - PUT/DELETE   /professors/888/classes/3     {Class with image link}
+  - [DONE] GET          /professors/888/classes/3 -----> Class
+  - [DONE] PUT/DELETE   /professors/888/classes/3        {Class}
 
 https://mep-org.github.io/Prototype/#/professor/exercises
 + https://mep-org.github.io/Prototype/#/professor/exercises/add
-  - GET         /professors/888/exercises -----> List<ExercisePreview> + List<Class_name_id>
-  - POST        /professors/888/exercises        {Exercise with links for datasets}
+  - [DONE] GET         /professors/888/exercises -----> List<ExercisePreview> + List<Class_name_id>
+  - [DONE] POST        /professors/888/exercises        {Exercise}
 
 https://mep-org.github.io/Prototype/#/professor/exercises/1
   - GET              /professors/888/exercises/3 -----> Exercise + List<Class_name_id> + List<Metric_name_id> + [includes ranking]
-  - PUT/DELETE       /professors/888/exercises/3     {Exercise with links for datasets}
+  - [DONE] PUT/DELETE       /professors/888/exercises/3     {Exercise}
   - GET              /professors/888/exercises/3/solutions (not supported in the prototype) -----> link to solution.py
 
 https://mep-org.github.io/Prototype/#/professor/metrics
