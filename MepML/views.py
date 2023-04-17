@@ -15,16 +15,16 @@ def invalid_data_dict():
 @api_view(["GET"])
 def getAll(request):
     # Create Professor
-    user = User.objects.create_user(username="professor", first_name="Rafael", last_name="Gonçalves", email="rfg@ua.pt")
+    user = User.objects.create_user(nmec=102534, name="Rafael Gonçalves", email="rfg@ua.pt")
 
-    professor = Professor.objects.create(user=user, nmec=102534)
+    professor = Professor.objects.create(user=user)
 
     # Create Students
-    user1 = User.objects.create_user(username="student1", first_name="João", last_name="Mário", email="joao_mario@ua.pt")
-    student1 = Student.objects.create(user=user1, nmec=654321)
+    user1 = User.objects.create_user(nmec=654321, name="João Mário", email="jm@ua.pt")
+    student1 = Student.objects.create(user=user1)
 
-    user2 = User.objects.create_user(username="student2", first_name="Rafa", last_name="Silva", email="rafa_silva@ua.pt")
-    student2 = Student.objects.create(user=user2, nmec=987654)
+    user2 = User.objects.create_user(nmec=987654, name="Rafa Silva", email="rs@ua.pt")
+    student2 = Student.objects.create(user=user2)
 
     # # Create class
     # class_ = Class.objects.create(id=1, name="Class 1", image="image.png", created_by=professor)
