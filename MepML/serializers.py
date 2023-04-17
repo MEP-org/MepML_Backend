@@ -6,7 +6,7 @@ from MepML.models import CodeSubmission, Professor, Student, Class, Dataset, Met
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('email', 'first_name', 'last_name')
+        fields = ('email', 'nmec', 'name')
 
 
 class StudentSerializer(serializers.ModelSerializer):
@@ -14,7 +14,7 @@ class StudentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Student
-        fields = ('id', 'user', 'nmec')
+        fields = ('id', 'user')
 
 
 class ProfessorSerializer(serializers.ModelSerializer):
