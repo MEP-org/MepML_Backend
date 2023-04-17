@@ -2,6 +2,7 @@ from datetime import timezone
 from django.utils.timezone import make_aware
 import datetime
 from django.db import models
+
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 
 class CustomUserManager(BaseUserManager):
@@ -70,6 +71,46 @@ class Student(models.Model):
     def num_exercises(self):
         # Number of exercises that the student has to do in which the deadline has not passed
         return Exercise.objects.filter(students_class__students=self, deadline__gt=datetime.datetime.now(timezone.utc)).count()
+
+    @property
+    def num_submissions(self):
+        # Number of submissions that the student has delivered
+        return CodeSubmission.objects.filter(student=self).count()
+
+    @property
+    def next_deadline(self):
+        # Next deadline in which the deadline has not passed
+        next_deadline = Exercise.objects.filter(students_class__students=self, deadline__gt=datetime.datetime.now(timezone.utc)).order_by('deadline').first()
+        if next_deadline is None:
+            return None
+        return next_deadline.deadline
+
+    @property
+    def last_ranking(self):
+        # Last exercise that the student has done
+        last_submission = CodeSubmission.objects.filter(student=self).order_by('-result_submission_date').first()
+
+        if last_submission is None:
+            return None
+
+        exercise_class = last_submission.exercise.students_class
+
+        # Get the results of the class for the same exercise
+        class_results = Result.objects.filter(exercise=last_submission.exercise, student__in=exercise_class.students.all()).order_by('-score')
+
+        # Get my position in the ranking of the class
+        my_position = 0
+        for result in class_results:
+            if result.student == self:
+                break
+            my_position += 1
+
+        return my_position + 1
+
+    @property
+    def num_exercises(self):
+        # Number of exercises that the student has to do in which the deadline has not passed
+        return Exercise.objects.filter(students_class__students=self, deadline__gt=datetime.datetime.now(timezone.utc)).count()
     
     @property
     def num_submissions(self):
@@ -110,7 +151,7 @@ class Student(models.Model):
 class Class(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50)
-    image = models.ImageField(upload_to='Class_images/', blank=True)
+    image = models.ImageField(upload_to='classes_images/', blank=True)
     # relationships
     created_by = models.ForeignKey(Professor, on_delete=models.CASCADE)
     students = models.ManyToManyField(Student, blank=True)
@@ -121,23 +162,22 @@ class Class(models.Model):
 
 class Dataset(models.Model):
     id = models.AutoField(primary_key=True)
-    
+
     train_name = models.CharField(max_length=30)
-    train_dataset = models.FileField(upload_to='Datasets/Train/')
+    train_dataset = models.FileField(upload_to='datasets/train/')
     train_upload_date = models.DateTimeField(auto_now_add=True)
 
     test_name = models.CharField(max_length=30)
-    test_dataset = models.FileField(upload_to='Datasets/Test/')
+    test_dataset = models.FileField(upload_to='datasets/test/')
     test_upload_date = models.DateTimeField(auto_now_add=True)
-    
 
 
 class Metric(models.Model):
     id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=20)
-    description = models.CharField(max_length=100)
-    metric_file = models.FileField(upload_to='Metrics/')
-    created_by = models.ForeignKey(Professor, on_delete=models.CASCADE)
+    description = models.CharField(max_length=300, blank=True)
+    created_by = models.ForeignKey(Professor, on_delete=models.CASCADE, null=True, blank=True)
+    metric_file = models.FileField(upload_to='metrics/')
 
 
 class Exercise(models.Model):
@@ -171,6 +211,7 @@ class Result(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)
     metric = models.ForeignKey(Metric, on_delete=models.CASCADE)
+
 
 class CodeSubmission(models.Model):
     id = models.AutoField(primary_key=True)

@@ -1,19 +1,23 @@
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from MepML.serializers import ProfessorClassesSerializer, ProfessorClassPostSerializer
-from MepML.models import Class
+from MepML.serializers import ProfessorMetricsSerializer, ProfessorMetricPostSerializer
+from MepML.models import Metric
 # from app.security import *
 
 
-def get_classes(request, prof_id):
-    classes = Class.objects.filter(created_by=prof_id)
-    serializer = ProfessorClassesSerializer(classes, many=True)
+def get_metrics(request, prof_id):
+    my_metrics = Metric.objects.filter(created_by=prof_id)
+    other_metrics = Metric.objects.filter(created_by=None)
+    serializer = ProfessorMetricsSerializer(instance={
+        'my_metrics': my_metrics,
+        'other_metrics': other_metrics
+    })
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-def post_class(request):
-    serializer = ProfessorClassPostSerializer(data=request.data)
+def post_metric(request):
+    serializer = ProfessorMetricPostSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -26,8 +30,8 @@ def post_class(request):
 def handle(request, prof_id=None):
     try:
         if request.method == 'GET':
-            return get_classes(request, prof_id)
+            return get_metrics(request, prof_id)
         elif request.method == 'POST':
-            return post_class(request)
+            return post_metric(request)
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
