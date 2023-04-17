@@ -1,11 +1,12 @@
 from rest_framework import serializers
 from MepML.models import CodeSubmission, Professor, Student, Class, Dataset, Metric, Exercise, User, Result
 
+
 # ------------------------------ User Type Serializers ------------------------------
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('email', 'nmec', 'name')
+        fields = ('email', 'first_name', 'last_name')
 
 
 class StudentSerializer(serializers.ModelSerializer):
@@ -13,7 +14,7 @@ class StudentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Student
-        fields = ('id', 'user')
+        fields = ('id', 'user', 'nmec')
 
 
 class ProfessorSerializer(serializers.ModelSerializer):
@@ -44,6 +45,12 @@ class ProfessorClassesSerializer(serializers.ModelSerializer):
         fields = ["id", "name", "num_students", "image"]
 
 
+class ProfessorClassPostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Class
+        fields = "__all__"
+
+
 # ------------------------------ Student Class Serializers ------------------------------
 class StudentClassSerializer(serializers.ModelSerializer):
     students = StudentSerializer(many=True)
@@ -52,6 +59,7 @@ class StudentClassSerializer(serializers.ModelSerializer):
     class Meta:
         model = Class
         fields = ('id', 'name', 'created_by', 'image', 'students')
+
 
 class StudentClassesSerializer(serializers.ModelSerializer):
     num_students = serializers.SerializerMethodField()
@@ -68,22 +76,25 @@ class StudentClassesSerializer(serializers.ModelSerializer):
 # ------------------------------ Metric Serializers ------------------------------
 class MetricSerializer(serializers.ModelSerializer):
     created_by = ProfessorSerializer()
-    
+
     class Meta:
         model = Metric
-        fields = ['id', "title", "description", "metric_file", "created_by"]
+        fields = ['id', "title", "description", "created_by", "metric_file"]
+
 
 class MetricOwnSerializer(serializers.ModelSerializer):
     class Meta:
         model = Metric
         fields = ['id', "title", "description"]
 
+
 class MetricViewerSerializer(serializers.ModelSerializer):
     created_by = ProfessorSerializer()
-    
+
     class Meta:
         model = Metric
         fields = ['id', "title", "description", "created_by"]
+
 
 class ProfessorMetricsSerializer(serializers.Serializer):
     my_metrics = MetricOwnSerializer(many=True)
@@ -96,11 +107,19 @@ class ProfessorMetricsSerializer(serializers.Serializer):
             'other_metrics': data['other_metrics'],
         }
 
+
+class ProfessorMetricPostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Metric
+        fields = "__all__"
+
+
 # ------------------------------ Dataset Serializers ------------------------------
 class DatasetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Dataset
         fields = ['id', "train_name", "train_dataset", "train_upload_date", "test_name", "test_dataset", "test_upload_date"]
+
 
 # ------------------------------ Exercise Serializers ------------------------------
 class ExerciseClassSerializer(serializers.ModelSerializer):
@@ -108,15 +127,23 @@ class ExerciseClassSerializer(serializers.ModelSerializer):
         model = Class
         fields = ['id', "name"]
 
+
 class ExerciseSerializer(serializers.ModelSerializer):
     created_by = ProfessorSerializer()
     dataset = DatasetSerializer()
     metrics = MetricSerializer(many=True)
     students_class = ExerciseClassSerializer()
-    
+
     class Meta:
         model = Exercise
         fields = ["id", "title", "subtitle", "description", "evaluation", "publish_date", "deadline", "limit_of_attempts", "visibility", "students_class", "metrics", "dataset", "created_by"]
+
+
+class ExercisePostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Exercise
+        fields = "__all__"
+
 
 # ------------------------------ Professor Exercise Serializers ------------------------------
 class ProfessorExerciseResultSerializer(serializers.ModelSerializer):
@@ -138,16 +165,17 @@ class ProfessorExerciseSerializer(serializers.Serializer):
             'exercise': data['exercise'],
             'results': data['results'],
         }
-    
+
 
 class ProfessorExercisesClassSerializer(serializers.ModelSerializer):
     class Meta:
         model = Class
         fields = ['id', "name"]
 
+
 class ProfessorExercisesExerciseSerializer(serializers.ModelSerializer):
     students_class = ProfessorClassesSerializer()
-    
+
     class Meta:
         model = Exercise
         fields = ["id", "title", "subtitle", "publish_date", "deadline", "limit_of_attempts", "visibility", "students_class", "num_answers"]
@@ -163,7 +191,7 @@ class ProfessorExercisesSerializer(serializers.Serializer):
             'exercises': data['exercises'],
             'classes': data['classes'],
         }
-    
+
 
 # ------------------------------ Public Exercises ------------------------------
 class PublicExercisesProfessorsSerializer(serializers.ModelSerializer):
@@ -175,6 +203,7 @@ class PublicExercisesProfessorsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Professor
         fields = ('id', 'name')
+
 
 class PublicExercisesExerciseTrainingDatasetSerializer(serializers.ModelSerializer):
     size = serializers.SerializerMethodField()
@@ -195,6 +224,7 @@ class PublicExercisesExerciseSerializer(serializers.ModelSerializer):
         model = Exercise
         fields = ["id", "title", "subtitle", "publish_date", "created_by", "dataset"]
 
+
 class PublicExercisesSerializer(serializers.Serializer):
     exercises = PublicExercisesExerciseSerializer(many=True)
     professors = PublicExercisesProfessorsSerializer(many=True)
@@ -205,7 +235,7 @@ class PublicExercisesSerializer(serializers.Serializer):
             'exercises': data['exercises'],
             'professors': data['professors'],
         }
-    
+
 
 # ------------------------------ Student Assignment Serializers ------------------------------
 class StudentAssignmentExerciseDatasetSerializer(serializers.ModelSerializer):
@@ -214,10 +244,10 @@ class StudentAssignmentExerciseDatasetSerializer(serializers.ModelSerializer):
 
     def get_train_dataset_size(self, obj):
         return obj.train_dataset.size
-    
+
     def get_test_dataset_size(self, obj):
         return obj.test_dataset.size
-    
+
     class Meta:
         model = Dataset
         fields = ["train_name", "train_dataset", "train_dataset_size", "train_upload_date", "test_name", "test_dataset", "test_dataset_size", "test_upload_date"]
@@ -240,6 +270,7 @@ class StudentAssignmentExerciseSerializer(serializers.ModelSerializer):
         model = Exercise
         fields = ["id", "title", "subtitle", "publish_date", "deadline", "limit_of_attempts", "visibility", "students_class", "metrics", "description", "evaluation", "dataset"]
 
+
 class StudentAssignmentExerciseAndOwnResultsSerializer(serializers.Serializer):
     exercise = StudentAssignmentExerciseSerializer()
     my_results = StudentAssignmentExerciseOwnResultsSerializer(many=True)
@@ -250,7 +281,7 @@ class StudentAssignmentExerciseAndOwnResultsSerializer(serializers.Serializer):
             'exercise': data['exercise'],
             'my_results': data['my_results'],
         }
-    
+
 
 class StudentAssignmentCodeSubmissionSerializer(serializers.ModelSerializer):
     class Meta:
@@ -270,13 +301,15 @@ class StudentAssignmentSerializer(serializers.Serializer):
             'all_results': data['all_results'],
             'submission': data['submission'],
         }
-    
+
 # ------------------------------ Student Assignments Serializers ------------------------------
+
 
 class StudentAssignmentsClassSerializer(serializers.ModelSerializer):
     class Meta:
         model = Class
         fields = ['id', "name"]
+
 
 class StudentAssignmentsExerciseSerializer(serializers.ModelSerializer):
     students_class = StudentAssignmentsClassSerializer()
@@ -284,6 +317,7 @@ class StudentAssignmentsExerciseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Exercise
         fields = ["id", "title", "subtitle", "publish_date", "deadline", "limit_of_attempts", "visibility", "students_class", "num_answers"]
+
 
 class StudentAssignmentsSerializer(serializers.Serializer):
     exercises = StudentAssignmentsExerciseSerializer(many=True)
@@ -295,7 +329,7 @@ class StudentAssignmentsSerializer(serializers.Serializer):
             'exercises': data['exercises'],
             'classes': data['classes'],
         }
-    
+
 
 # ------------------------------ Student Home Serializers ------------------------------
 class StudentHomeSerializer(serializers.ModelSerializer):
