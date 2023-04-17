@@ -59,5 +59,5 @@ class ExercisePreviewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Exercise
-        fields = ["id", "title", "subtitle", "evaluation", "publish_date",
-                  "deadline", "limit_of_attempts", "visibility", "class_name"]
+        fields = ["id", "title", "subtitle", "publish_date", "deadline",
+                  "limit_of_attempts", "visibility", "class_name"]

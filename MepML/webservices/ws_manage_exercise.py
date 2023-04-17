@@ -2,17 +2,19 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from MepML.serializers import ExerciseSerializer, StudentSerializer
-from MepML.models import Exercise, Class, Result
+from MepML.models import Exercise, Class, Metric, Result
 # from app.security import *
 
 
 def get_exercise(request, prof_id, exercise_id):
     exercise = Exercise.objects.get(id=exercise_id)
     prof_classes = Class.objects.filter(created_by=prof_id)
+    metrics = Metric.objects.all()
     ranking = Result.objects.filter(exercise=exercise_id).order_by('-score')
     response = {
         "exercise": ExerciseSerializer(exercise).data,
         "prof_classes": [{"id": cls.id, "name": cls.name} for cls in prof_classes],
+        "metrics": [{"id": metric.id, "name": metric.name} for metric in metrics],
         "ranking": [{"id": result.student.id, "name": result.student.name} for result in ranking]
     }
     return Response(response, status=status.HTTP_200_OK)

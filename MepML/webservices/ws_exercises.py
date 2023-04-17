@@ -9,7 +9,7 @@ from MepML.models import Exercise, Class, CodeSubmission
 def get_exercises(request, prof_id):
     prof_exercises = Exercise.objects.filter(created_by=prof_id)
     prof_classes = Class.objects.filter(created_by=prof_id)
-    response = {"exercises": [], "prof_classes": [cls.id for cls in prof_classes]}
+    response = {"exercises": [], "prof_classes": [{"id": cls.id, "name": cls.name} for cls in prof_classes]}
     serializer_data = ExercisePreviewSerializer(prof_exercises, many=True).data
     for ex in serializer_data:
         ex["num_answers"] = CodeSubmission.objects.filter(exercise=ex["id"]).count()
