@@ -8,7 +8,7 @@ from MepML.models import Metric
 
 def get_metric(request, metric_id):
     metric = Metric.objects.get(id=metric_id)
-    serializer = MetricSerializer
+    serializer = MetricSerializer(metric)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
