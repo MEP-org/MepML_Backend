@@ -1,3 +1,6 @@
+from datetime import timezone
+from django.utils.timezone import make_aware
+import datetime
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
@@ -21,6 +24,46 @@ class Professor(models.Model):
 class Student(models.Model):
     id = models.AutoField(primary_key=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    @property
+    def num_exercises(self):
+        # Number of exercises that the student has to do in which the deadline has not passed
+        return Exercise.objects.filter(students_class__students=self, deadline__gt=datetime.datetime.now(timezone.utc)).count()
+    
+    @property
+    def num_submissions(self):
+        # Number of submissions that the student has delivered 
+        return CodeSubmission.objects.filter(student=self).count()
+    
+    @property
+    def next_deadline(self):
+        # Next deadline in which the deadline has not passed
+        next_deadline = Exercise.objects.filter(students_class__students=self, deadline__gt=datetime.datetime.now(timezone.utc)).order_by('deadline').first()
+        if next_deadline is None:
+            return None
+        return next_deadline.deadline
+    
+    @property
+    def last_ranking(self):
+        #Last exercise that the student has done
+        last_submission = CodeSubmission.objects.filter(student=self).order_by('-result_submission_date').first()
+
+        if last_submission is None:
+            return None
+        
+        exercise_class = last_submission.exercise.students_class
+        
+        # Get the results of the class for the same exercise
+        class_results = Result.objects.filter(exercise=last_submission.exercise, student__in=exercise_class.students.all()).order_by('-score')
+
+        # Get my position in the ranking of the class
+        my_position = 0
+        for result in class_results:
+            if result.student == self:
+                break
+            my_position += 1
+        
+        return my_position + 1
 
 
 class Class(models.Model):
@@ -50,7 +93,8 @@ class Dataset(models.Model):
 
 class Metric(models.Model):
     id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=20)
+    title = models.CharField(max_length=20)
+    description = models.CharField(max_length=100)
     metric_file = models.FileField(upload_to='Metrics/')
     created_by = models.ForeignKey(Professor, on_delete=models.CASCADE)
 
@@ -67,10 +111,14 @@ class Exercise(models.Model):
     visibility = models.BooleanField()
 
     # relationships
-    students_class = models.ForeignKey(Class, on_delete=models.CASCADE)
+    students_class = models.ForeignKey(Class, null=True, on_delete=models.CASCADE)
     metrics = models.ManyToManyField(Metric)
     dataset = models.ForeignKey(Dataset, on_delete=models.CASCADE)
     created_by = models.ForeignKey(Professor, on_delete=models.CASCADE)
+
+    @property # for using in serializer
+    def num_answers(self):
+        return CodeSubmission.objects.filter(exercise=self).count()
 
 
 class Result(models.Model):
@@ -85,11 +133,13 @@ class Result(models.Model):
 
 class CodeSubmission(models.Model):
     id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=30)
+    file_name_result = models.CharField(max_length=30)
     result_submission = models.FileField(upload_to='results/')
+    result_submission_date = models.DateTimeField(auto_now_add=True)
     code_submission = models.FileField(upload_to='code_submissions/')
-    submission_date = models.DateTimeField(auto_now_add=True)
+    file_name_code = models.CharField(max_length=30)
+    code_submission_date = models.DateTimeField(auto_now_add=True)
 
     # relationships
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
-    Exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)
+    exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)
