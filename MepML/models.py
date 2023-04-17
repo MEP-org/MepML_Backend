@@ -26,18 +26,6 @@ class Class(models.Model):
         verbose_name_plural = "Classes"
 
 
-class Dataset(models.Model):
-    id = models.AutoField(primary_key=True)
-
-    train_name = models.CharField(max_length=30)
-    train_dataset = models.FileField(upload_to='datasets/train/')
-    train_upload_date = models.DateTimeField(auto_now_add=True)
-
-    test_name = models.CharField(max_length=30)
-    test_dataset = models.FileField(upload_to='datasets/test/')
-    test_upload_date = models.DateTimeField(auto_now_add=True)
-
-
 class Metric(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=20)
@@ -52,15 +40,16 @@ class Exercise(models.Model):
     subtitle = models.CharField(max_length=30)
     description = models.CharField(max_length=100)
     evaluation = models.CharField(max_length=100)
-    publish_date = models.DateTimeField()
+    publish_date = models.DateTimeField(auto_now_add=True)
     deadline = models.DateTimeField()
     limit_of_attempts = models.SmallIntegerField()
     visibility = models.BooleanField()
+    train_dataset = models.FileField(upload_to='datasets/train/')
+    test_dataset = models.FileField(upload_to='datasets/test/')
 
     # relationships
     students_class = models.ForeignKey(Class, on_delete=models.CASCADE)
     metrics = models.ManyToManyField(Metric)
-    dataset = models.ForeignKey(Dataset, on_delete=models.CASCADE)
     created_by = models.ForeignKey(Professor, on_delete=models.CASCADE)
 
 
@@ -84,4 +73,4 @@ class CodeSubmission(models.Model):
 
     # relationships
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
-    Exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)
+    exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)

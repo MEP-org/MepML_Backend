@@ -26,18 +26,6 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name='Dataset',
-            fields=[
-                ('id', models.AutoField(primary_key=True, serialize=False)),
-                ('train_name', models.CharField(max_length=30)),
-                ('train_dataset', models.FileField(upload_to='datasets/train/')),
-                ('train_upload_date', models.DateTimeField(auto_now_add=True)),
-                ('test_name', models.CharField(max_length=30)),
-                ('test_dataset', models.FileField(upload_to='datasets/test/')),
-                ('test_upload_date', models.DateTimeField(auto_now_add=True)),
-            ],
-        ),
-        migrations.CreateModel(
             name='Exercise',
             fields=[
                 ('id', models.AutoField(primary_key=True, serialize=False)),
@@ -45,10 +33,12 @@ class Migration(migrations.Migration):
                 ('subtitle', models.CharField(max_length=30)),
                 ('description', models.CharField(max_length=100)),
                 ('evaluation', models.CharField(max_length=100)),
-                ('publish_date', models.DateTimeField()),
+                ('publish_date', models.DateTimeField(auto_now_add=True)),
                 ('deadline', models.DateTimeField()),
                 ('limit_of_attempts', models.SmallIntegerField()),
                 ('visibility', models.BooleanField()),
+                ('train_dataset', models.FileField(upload_to='datasets/train/')),
+                ('test_dataset', models.FileField(upload_to='datasets/test/')),
             ],
         ),
         migrations.CreateModel(
@@ -99,11 +89,6 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='exercise',
-            name='dataset',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='MepML.dataset'),
-        ),
-        migrations.AddField(
-            model_name='exercise',
             name='metrics',
             field=models.ManyToManyField(to='MepML.metric'),
         ),
@@ -120,7 +105,7 @@ class Migration(migrations.Migration):
                 ('result_submission', models.FileField(upload_to='results/')),
                 ('code_submission', models.FileField(upload_to='code_submissions/')),
                 ('submission_date', models.DateTimeField(auto_now_add=True)),
-                ('Exercise', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='MepML.exercise')),
+                ('exercise', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='MepML.exercise')),
                 ('student', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='MepML.student')),
             ],
         ),

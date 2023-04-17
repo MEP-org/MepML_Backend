@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from MepML.models import Professor, Student, Class, Dataset, Metric, Exercise
+from MepML.models import Professor, Student, Class, Metric, Exercise
 
 
 class ProfessorSerializer(serializers.ModelSerializer):
@@ -49,3 +49,15 @@ class ExerciseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Exercise
         fields = "__all__"
+
+
+class ExercisePreviewSerializer(serializers.ModelSerializer):
+    class_name = serializers.SerializerMethodField()
+
+    def get_class_name(self, obj):
+        return obj.students_class.name
+
+    class Meta:
+        model = Exercise
+        fields = ["id", "title", "subtitle", "evaluation", "publish_date",
+                  "deadline", "limit_of_attempts", "visibility", "class_name"]
