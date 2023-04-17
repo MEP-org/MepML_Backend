@@ -33,7 +33,7 @@ urlpatterns = [
     path("professors/<int:prof_id>/metrics/<int:metric_id>", ws_manage_metric.handle),
     path("professors/<int:prof_id>/exercises", ws_exercises.handle),
     path("professors/<int:prof_id>/exercises/<int:exercise_id>", ws_manage_exercise.handle),
-    path("apitest/", views.getAll, name="getAll"),
+    path("apitest", views.getAll, name="getAll"),
     path("getclass/<int:class_id>", views.get_class, name="get_class"),
     path("updateclass/<int:class_id>", views.update_class, name="update_class"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,23 +1,23 @@
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from MepML.serializers import MetricSerializer, MetricPreviewSerializer
+from MepML.serializers import ProfessorMetricsSerializer, ProfessorMetricPostSerializer
 from MepML.models import Metric
 # from app.security import *
 
 
 def get_metrics(request, prof_id):
-    default_metrics = Metric.objects.filter(created_by=None)
-    prof_metrics = Metric.objects.filter(created_by=prof_id)
-    response = {
-        'default': MetricPreviewSerializer(default_metrics, many=True).data,
-        'custom': MetricPreviewSerializer(prof_metrics, many=True).data
-    }
-    return Response(response, status=status.HTTP_200_OK)
+    my_metrics = Metric.objects.filter(created_by=prof_id)
+    other_metrics = Metric.objects.filter(created_by=None)
+    serializer = ProfessorMetricsSerializer(instance={
+        'my_metrics': my_metrics,
+        'other_metrics': other_metrics
+    })
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 def post_metric(request):
-    serializer = MetricSerializer(data=request.data)
+    serializer = ProfessorMetricPostSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)

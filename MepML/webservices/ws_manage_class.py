@@ -1,20 +1,20 @@
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from MepML.serializers import ClassSerializer, ClassPreviewSerializer
+from MepML.serializers import ProfessorClassSerializer, ProfessorClassPostSerializer
 from MepML.models import Class
 # from app.security import *
 
 
 def get_class(request, class_id):
     cls = Class.objects.get(id=class_id)
-    serializer = ClassSerializer(cls)
+    serializer = ProfessorClassSerializer(cls)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 def put_class(request, class_id):
     cls = Class.objects.get(id=class_id)
-    serializer = ClassSerializer(cls, data=request.data)
+    serializer = ProfessorClassPostSerializer(cls, data=request.data)
     if serializer.is_valid():
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)

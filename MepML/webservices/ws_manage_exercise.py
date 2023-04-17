@@ -1,28 +1,32 @@
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from MepML.serializers import ExerciseSerializer, StudentSerializer
-from MepML.models import Exercise, Class, Metric, Result
+from MepML.serializers import ProfessorExerciseSerializer, ExercisePostSerializer
+from MepML.models import Exercise, Dataset, Result
 # from app.security import *
 
 
 def get_exercise(request, prof_id, exercise_id):
     exercise = Exercise.objects.get(id=exercise_id)
-    prof_classes = Class.objects.filter(created_by=prof_id)
-    metrics = Metric.objects.all()
     ranking = Result.objects.filter(exercise=exercise_id).order_by('-score')
-    response = {
-        "exercise": ExerciseSerializer(exercise).data,
-        "prof_classes": [{"id": cls.id, "name": cls.name} for cls in prof_classes],
-        "metrics": [{"id": metric.id, "name": metric.name} for metric in metrics],
-        "ranking": [{"id": result.student.id, "name": result.student.name} for result in ranking]
-    }
-    return Response(response, status=status.HTTP_200_OK)
+    serializer = ProfessorExerciseSerializer(instance={
+        'exercise': exercise,
+        'results': ranking
+    })
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 def put_exercise(request, exercise_id):
     exercise = Exercise.objects.get(id=exercise_id)
-    serializer = ExerciseSerializer(exercise, data=request.data)
+    dataset = Dataset.objects.create(
+        train_name = request.FILES['train_dataset'].name,
+        train_dataset = request.FILES['train_dataset'],
+        test_name = request.data['test_dataset'].name,
+        test_dataset = request.FILES['test_dataset']
+    )
+    data_ = request.data
+    data_['dataset'] = dataset.id
+    serializer = ExercisePostSerializer(exercise, data=data_)
     if serializer.is_valid():
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)

@@ -1,24 +1,31 @@
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from MepML.serializers import ExerciseSerializer, ExercisePreviewSerializer
-from MepML.models import Exercise, Class, CodeSubmission
+from MepML.serializers import ProfessorExercisesSerializer, ExercisePostSerializer
+from MepML.models import Exercise, Class, Exercise, Dataset
 # from app.security import *
 
 
 def get_exercises(request, prof_id):
-    prof_exercises = Exercise.objects.filter(created_by=prof_id)
+    exercises = Exercise.objects.filter(created_by=prof_id)
     prof_classes = Class.objects.filter(created_by=prof_id)
-    response = {"exercises": [], "prof_classes": [{"id": cls.id, "name": cls.name} for cls in prof_classes]}
-    serializer_data = ExercisePreviewSerializer(prof_exercises, many=True).data
-    for ex in serializer_data:
-        ex["num_answers"] = CodeSubmission.objects.filter(exercise=ex["id"]).count()
-        response["exercises"].append(ex)
-    return Response(response, status=status.HTTP_200_OK)
+    serializer = ProfessorExercisesSerializer(instance={
+        'exercises': exercises,
+        'classes': prof_classes
+    })
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 def post_exercise(request):
-    serializer = ExerciseSerializer(data=request.data)
+    dataset = Dataset.objects.create(
+        train_name = request.FILES['train_dataset'].name,
+        train_dataset = request.FILES['train_dataset'],
+        test_name = request.data['test_dataset'].name,
+        test_dataset = request.FILES['test_dataset']
+    )
+    data_ = request.data
+    data_['dataset'] = dataset.id
+    serializer = ExercisePostSerializer(data=data_)
     if serializer.is_valid():
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -29,10 +36,10 @@ def post_exercise(request):
 # @authentication_classes([TokenAuthentication])
 # @permission_classes([IsAuthenticated | IsGetRequest])
 def handle(request, prof_id=None):
-    try:
-        if request.method == 'GET':
-            return get_exercises(request, prof_id)
-        elif request.method == 'POST':
-            return post_exercise(request)
-    except Exception as e:
-        return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    #try:
+    if request.method == 'GET':
+        return get_exercises(request, prof_id)
+    elif request.method == 'POST':
+        return post_exercise(request)
+    #except Exception as e:
+    #    return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)

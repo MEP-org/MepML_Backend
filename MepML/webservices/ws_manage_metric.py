@@ -1,20 +1,20 @@
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from MepML.serializers import MetricSerializer
+from MepML.serializers import ProfessorMetricPostSerializer
 from MepML.models import Metric
 # from app.security import *
 
 
 def get_metric(request, metric_id):
     metric = Metric.objects.get(id=metric_id)
-    serializer = MetricSerializer(metric)
+    serializer = ProfessorMetricPostSerializer(metric)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 def put_metric(request, metric_id):
     metric = Metric.objects.get(id=metric_id)
-    serializer = MetricSerializer(metric, data=request.data)
+    serializer = ProfessorMetricPostSerializer(metric, data=request.data)
     if serializer.is_valid():
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)

@@ -22,7 +22,7 @@ https://mep-org.github.io/Prototype/#/professor/exercises
   - [DONE] POST        /professors/888/exercises        {Exercise}
 
 https://mep-org.github.io/Prototype/#/professor/exercises/1
-  - [MUST BE TESTED] GET              /professors/888/exercises/3 -----> Exercise + List<Class_name_id> + List<Metric_name_id> + [includes ranking]
+  - [MUST BE TESTED] GET              /professors/888/exercises/3 -----> Exercise + List<Class_name_id> + List<Metric_name_id> + List<Result>
   - [DONE]           PUT/DELETE       /professors/888/exercises/3     {Exercise}
   - GET              /professors/888/exercises/3/solutions (not supported in the prototype) -----> link to solution.py
 
