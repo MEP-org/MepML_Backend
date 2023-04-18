@@ -15,7 +15,7 @@ COPY . code
 WORKDIR /code
 
 # port where the Django app runs  
-EXPOSE 8000  
+EXPOSE 8080  
 
 # start server  
-CMD ["python3", "manage.py", "runserver", "0.0.0.0:8000", "--settings=djangoMepML.production_settings"]
+CMD ["python3", "manage.py", "runserver", "0.0.0.0:8080", "--settings=djangoMepML.production_settings"]
