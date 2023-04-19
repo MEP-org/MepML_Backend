@@ -7,7 +7,7 @@ from MepML.models import Exercise, Professor
 
 
 def get_all_public(request):
-    exercises = Exercise.objects.all()
+    exercises = Exercise.objects.filter(created_by=3)
     professors = Professor.objects.all()
     serializer = PublicExercisesSerializer(instance={
         'exercises': exercises,
