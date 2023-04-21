@@ -126,10 +126,12 @@ class Dataset(models.Model):
     train_name = models.CharField(max_length=30)
     train_dataset = models.FileField(upload_to='datasets/train/')
     train_upload_date = models.DateTimeField(auto_now_add=True)
-
+    train_size = models.IntegerField() #size in bytes
+    
     test_name = models.CharField(max_length=30)
     test_dataset = models.FileField(upload_to='datasets/test/')
     test_upload_date = models.DateTimeField(auto_now_add=True)
+    test_size = models.IntegerField() #size in bytes
 
 
 class Metric(models.Model):

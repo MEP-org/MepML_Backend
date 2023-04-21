@@ -35,7 +35,8 @@ def insert_data(request):
     metric = Metric.objects.create(id=1, title="Metric 1", description="Metric Description 1", metric_file="metrica1", created_by=professor)
 
     # Create Dataset
-    dataset = Dataset.objects.create(train_name="train", train_dataset="train_dataset", test_name="test", test_dataset="test_dataset")
+    dataset = Dataset.objects.create(train_name="train", train_dataset="train_MGArrll.csv", train_size=1, 
+                                     test_name="test", test_dataset="test_oJHxflz.csv", test_size=1)
 
     # Create Exercise
     exercise = Exercise.objects.create(
@@ -60,7 +61,7 @@ def insert_data(request):
         evaluation="EvaluationMD 2",
         deadline= make_aware(datetime.datetime(2098, 12, 10, 12, 0, 0)),
         limit_of_attempts=3,
-        visibility=False,
+        visibility=True,
         students_class=class_,
         dataset=dataset,
         created_by=professor
@@ -75,7 +76,7 @@ def insert_data(request):
         evaluation="EvaluationMD 3",
         deadline= make_aware(datetime.datetime(1994, 12, 10, 12, 0, 0)),
         limit_of_attempts=3,
-        visibility=False,
+        visibility=True,
         students_class=class_,
         dataset=dataset,
         created_by=professor

@@ -2,9 +2,9 @@ from .settings import *
 
 DEBUG = True
 
-""" DATABASES = {
+DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': 'mydatabase',
     }
-} """
+}
