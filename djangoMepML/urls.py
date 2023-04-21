@@ -21,7 +21,7 @@ from django.contrib import admin
 from django.urls import path
 from MepML import views
 from MepML.webservices import ws_classes, ws_manage_class, ws_metrics, ws_manage_metric,\
-    ws_exercises, ws_manage_exercise
+    ws_exercises, ws_manage_exercise, ws_public_exercises
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -33,7 +33,8 @@ urlpatterns = [
     path("professors/<int:prof_id>/metrics/<int:metric_id>", ws_manage_metric.handle),
     path("professors/<int:prof_id>/exercises", ws_exercises.handle),
     path("professors/<int:prof_id>/exercises/<int:exercise_id>", ws_manage_exercise.handle),
-    path("apitest", views.getAll, name="getAll"),
+    path("public_exercises/", ws_public_exercises.handle),
+    path("apitest/", views.insert_data, name="insert_data"),
     path("getclass/<int:class_id>", views.get_class, name="get_class"),
     path("updateclass/<int:class_id>", views.update_class, name="update_class"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
