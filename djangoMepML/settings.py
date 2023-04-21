@@ -89,7 +89,8 @@ DATABASES = {
          'PASSWORD': 'mep_ml',  
          'HOST': '34.170.116.176',  
          'PORT': '3306'
-     }
+     },
+
 }
 
 # Media files (images, pdfs, etc.)

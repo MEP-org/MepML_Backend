@@ -107,46 +107,6 @@ class Student(models.Model):
 
         return my_position + 1
 
-    @property
-    def num_exercises(self):
-        # Number of exercises that the student has to do in which the deadline has not passed
-        return Exercise.objects.filter(students_class__students=self, deadline__gt=datetime.datetime.now(timezone.utc)).count()
-    
-    @property
-    def num_submissions(self):
-        # Number of submissions that the student has delivered 
-        return CodeSubmission.objects.filter(student=self).count()
-    
-    @property
-    def next_deadline(self):
-        # Next deadline in which the deadline has not passed
-        next_deadline = Exercise.objects.filter(students_class__students=self, deadline__gt=datetime.datetime.now(timezone.utc)).order_by('deadline').first()
-        if next_deadline is None:
-            return None
-        return next_deadline.deadline
-    
-    @property
-    def last_ranking(self):
-        #Last exercise that the student has done
-        last_submission = CodeSubmission.objects.filter(student=self).order_by('-result_submission_date').first()
-
-        if last_submission is None:
-            return None
-        
-        exercise_class = last_submission.exercise.students_class
-        
-        # Get the results of the class for the same exercise
-        class_results = Result.objects.filter(exercise=last_submission.exercise, student__in=exercise_class.students.all()).order_by('-score')
-
-        # Get my position in the ranking of the class
-        my_position = 0
-        for result in class_results:
-            if result.student == self:
-                break
-            my_position += 1
-        
-        return my_position + 1
-
 
 class Class(models.Model):
     id = models.AutoField(primary_key=True)
