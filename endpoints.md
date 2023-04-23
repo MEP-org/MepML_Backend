@@ -3,7 +3,7 @@ POST             /login
 
 https://mep-org.github.io/Prototype/#/professor/publicExercises
 + https://mep-org.github.io/Prototype/#/student/publicExercises
-  - GET              /public_exercises?filter1=...&filter2=...&page={pg} -----> List<ExercisePreview> + List<Professor_name_id> + pagination stuff
+  - [DONE] GET              /public_exercises?filter1=...&filter2=...&page={pg} -----> List<ExercisePreview> + List<Professor_name_id> + pagination stuff
 
 
 ## For professors:
@@ -45,7 +45,7 @@ https://mep-org.github.io/Prototype/#/professor/classes/1
   - GET              /students/102534/classes/3 -----> Class
 
 https://mep-org.github.io/Prototype/#/student/assignments
-- GET              /students/102534/assignments -----> List<ExercisePreview>
+- [DONE] GET              /student/102534/assignments -----> List<ExercisePreview>
 
 https://mep-org.github.io/Prototype/#/student/assignments/1
   - GET              /students/102534/assignments/3 -----> Exercise + [includes ranking]
