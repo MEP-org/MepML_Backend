@@ -1,7 +1,7 @@
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework.pagination import PageNumberPagination
+from MepML.CustomPagination import CustomPagination
 from MepML.serializers import PublicExercisesSerializer
 from MepML.models import Dataset, Exercise, Professor
 # from app.security import *
@@ -40,8 +40,7 @@ def get_all_public(request):
     if "min_size" in request.GET:
         exercises = exercises.filter(dataset__in= Dataset.objects.filter(train_size__gte=request.GET["min_size"]))
 
-    paginator = PageNumberPagination()
-    paginator.page_size = 6
+    paginator = CustomPagination()
 
     exercises_paginados = paginator.paginate_queryset(exercises, request)
 

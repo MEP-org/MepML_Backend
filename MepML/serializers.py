@@ -239,7 +239,7 @@ class StudentAssignmentExerciseDatasetSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Dataset
-        fields = ["train_name", "train_dataset", "train_size", "train_upload_date"
+        fields = ["train_name", "train_dataset", "train_size", "train_upload_date",
                   "test_name", "test_dataset", "test_size", "test_upload_date"]
 
 

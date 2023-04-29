@@ -21,21 +21,28 @@ from django.contrib import admin
 from django.urls import path
 from MepML import views
 from MepML.webservices import ws_classes, ws_manage_class, ws_metrics, ws_manage_metric,\
-    ws_exercises, ws_manage_exercise, ws_public_exercises, ws_assignments
+    ws_exercises, ws_manage_exercise, ws_public_exercises, ws_assignments, ws_student_assignment, \
+    ws_student_class, ws_home, ws_student_classes
 from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
     path("professors/<int:prof_id>/classes", ws_classes.handle),
     path("professors/<int:prof_id>/classes/<int:class_id>", ws_manage_class.handle),
     path("professors/<int:prof_id>/metrics", ws_metrics.handle),
-    path("professors/<int:prof_id>/metrics/<int:metric_id>", ws_manage_metric.handle),
     path("professors/<int:prof_id>/exercises", ws_exercises.handle),
     path("professors/<int:prof_id>/exercises/<int:exercise_id>", ws_manage_exercise.handle),
-    path("public_exercises/", ws_public_exercises.handle),
-    path("student/<int:student_id>/assignments", ws_assignments.handle),
-    path("apitest/", views.insert_data, name="insert_data"),
+    path("publicexercises/", ws_public_exercises.handle),
+    path("students/<int:student_id>/assignments", ws_assignments.handle),
+    path("students/<int:student_id>/assignments/<int:assignment_id>", ws_student_assignment.handle),
+    path("students/<int:student_id>/classes", ws_student_classes.handle),
+    path("students/<int:student_id>/classes/<int:class_id>", ws_student_class.handle),
+    path("students/<int:student_id>/home", ws_home.handle),
+    #not to being use by front-end
+    path('admin/', admin.site.urls),
+    path("professors/<int:prof_id>/metrics/<int:metric_id>", ws_manage_metric.handle),
+    path("insertdata/", views.insert_data, name="insert_data"),
     path("getclass/<int:class_id>", views.get_class, name="get_class"),
     path("updateclass/<int:class_id>", views.update_class, name="update_class"),
+    path("apitest", views.create_default_metric, name="default_metric"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
