@@ -118,7 +118,8 @@ class ProfessorMetricPostSerializer(serializers.ModelSerializer):
 class DatasetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Dataset
-        fields = ['id', "train_name", "train_dataset", "train_upload_date", "test_name", "test_dataset", "test_upload_date"]
+        fields = ['id', "train_name", "train_dataset", "train_upload_date", "train_size", 
+                  "test_name", "test_dataset", "test_upload_date", "test_size"]
 
 
 # ------------------------------ Exercise Serializers ------------------------------
@@ -206,14 +207,10 @@ class PublicExercisesProfessorsSerializer(serializers.ModelSerializer):
 
 
 class PublicExercisesExerciseTrainingDatasetSerializer(serializers.ModelSerializer):
-    size = serializers.SerializerMethodField()
-
-    def get_size(self, obj):
-        return obj.train_dataset.size
-
+    
     class Meta:
         model = Dataset
-        fields = ["train_dataset", "size"]
+        fields = ["train_dataset", "train_size"]
 
 
 class PublicExercisesExerciseSerializer(serializers.ModelSerializer):
@@ -239,18 +236,11 @@ class PublicExercisesSerializer(serializers.Serializer):
 
 # ------------------------------ Student Assignment Serializers ------------------------------
 class StudentAssignmentExerciseDatasetSerializer(serializers.ModelSerializer):
-    train_dataset_size = serializers.SerializerMethodField()
-    test_dataset_size = serializers.SerializerMethodField()
-
-    def get_train_dataset_size(self, obj):
-        return obj.train_dataset.size
-
-    def get_test_dataset_size(self, obj):
-        return obj.test_dataset.size
 
     class Meta:
         model = Dataset
-        fields = ["train_name", "train_dataset", "train_dataset_size", "train_upload_date", "test_name", "test_dataset", "test_dataset_size", "test_upload_date"]
+        fields = ["train_name", "train_dataset", "train_size", "train_upload_date",
+                  "test_name", "test_dataset", "test_size", "test_upload_date"]
 
 
 class StudentAssignmentExerciseOwnResultsSerializer(serializers.ModelSerializer):
@@ -268,7 +258,8 @@ class StudentAssignmentExerciseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Exercise
-        fields = ["id", "title", "subtitle", "publish_date", "deadline", "limit_of_attempts", "visibility", "students_class", "metrics", "description", "evaluation", "dataset"]
+        fields = ["id", "title", "subtitle", "publish_date", "deadline", "limit_of_attempts", "visibility", 
+                  "students_class", "metrics", "description", "evaluation", "dataset"]
 
 
 class StudentAssignmentExerciseAndOwnResultsSerializer(serializers.Serializer):
@@ -286,7 +277,8 @@ class StudentAssignmentExerciseAndOwnResultsSerializer(serializers.Serializer):
 class StudentAssignmentCodeSubmissionSerializer(serializers.ModelSerializer):
     class Meta:
         model = CodeSubmission
-        fields = ['id', "file_name_result", "result_submission", "result_submission_date", "file_name_code", "code_submission", "code_submission_date"]
+        fields = ['id', "file_name_result", "result_submission", "result_submission_date", "file_name_code", 
+                  "code_submission", "code_submission_date"]
 
 
 class StudentAssignmentSerializer(serializers.Serializer):
@@ -316,7 +308,8 @@ class StudentAssignmentsExerciseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Exercise
-        fields = ["id", "title", "subtitle", "publish_date", "deadline", "limit_of_attempts", "visibility", "students_class", "num_answers"]
+        fields = ["id", "title", "subtitle", "publish_date", "deadline", "limit_of_attempts", 
+                  "visibility", "students_class", "num_answers"]
 
 
 class StudentAssignmentsSerializer(serializers.Serializer):
@@ -326,7 +319,7 @@ class StudentAssignmentsSerializer(serializers.Serializer):
     def to_representation(self, instance):
         data = super().to_representation(instance)
         return {
-            'exercises': data['exercises'],
+            'assignments': data['exercises'],
             'classes': data['classes'],
         }
 

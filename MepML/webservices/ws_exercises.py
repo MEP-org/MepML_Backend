@@ -20,8 +20,10 @@ def post_exercise(request):
     dataset = Dataset.objects.create(
         train_name = request.FILES['train_dataset'].name,
         train_dataset = request.FILES['train_dataset'],
+        train_size = request.FILES['train_dataset'].size,
         test_name = request.data['test_dataset'].name,
-        test_dataset = request.FILES['test_dataset']
+        test_dataset = request.FILES['test_dataset'],
+        test_size = request.FILES['test_dataset'].size
     )
     data_ = request.data
     data_['dataset'] = dataset.id
