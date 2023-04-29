@@ -32,7 +32,7 @@ def insert_data(request):
     class_.students.add(student2)
 
     # Create Metric
-    metric = Metric.objects.create(id=1, title="Metric 1", description="Metric Description 1", metric_file="metrica1", created_by=professor)
+    metric = Metric.objects.create(id=1, title="Metric 1", description="Metric Description 1", metric_file="metric_OOUSUjUM", created_by=professor)
 
     # Create Dataset
     dataset = Dataset.objects.create(train_name="train", train_dataset="train_MGArrll.csv", train_size=1, 
@@ -83,18 +83,26 @@ def insert_data(request):
     )
     exercise3.metrics.add(metric)
 
-    # # Create CodeSubmission
-    # code_submission1 = CodeSubmission.objects.create(file_name_result="result.py", result_submission="result.py", file_name_code="code.py", code_submission="code.py", exercise=exercise, student=student1)
-    # code_submission2 = CodeSubmission.objects.create(file_name_result="result.py", result_submission="result.py", file_name_code="code.py", code_submission="code.py", exercise=exercise, student=student2)
-    # code_submission3 = CodeSubmission.objects.create(file_name_result="result.py", result_submission="result.py", file_name_code="code.py", code_submission="code.py", exercise=exercise2, student=student1)
-    # code_submission4 = CodeSubmission.objects.create(file_name_result="result.py", result_submission="result.py", file_name_code="code.py", code_submission="code.py", exercise=exercise3, student=student1)
+    # Create CodeSubmission
+    code_submission1 = CodeSubmission.objects.create(file_name_result="result.py", result_submission="result.py", file_name_code="code.py", code_submission="code.py", exercise=exercise, student=student1)
+    code_submission2 = CodeSubmission.objects.create(file_name_result="result.py", result_submission="result.py", file_name_code="code.py", code_submission="code.py", exercise=exercise, student=student2)
+    code_submission3 = CodeSubmission.objects.create(file_name_result="result.py", result_submission="result.py", file_name_code="code.py", code_submission="code.py", exercise=exercise2, student=student1)
+    code_submission4 = CodeSubmission.objects.create(file_name_result="result.py", result_submission="result.py", file_name_code="code.py", code_submission="code.py", exercise=exercise3, student=student1)
 
-    # # Create Result
-    # result1 = Result.objects.create(score=0.5, student=student1, exercise=exercise, metric=metric)
-    # result2 = Result.objects.create(score=0.6, student=student1, exercise=exercise2, metric=metric)
-    # result3 = Result.objects.create(score=0.7, student=student1, exercise=exercise3, metric=metric)
-    # result10 = Result.objects.create(score=0.9, student=student2, exercise=exercise, metric=metric)
+    # Create Result
+    result1 = Result.objects.create(score=0.5, student=student1, exercise=exercise, metric=metric)
+    result2 = Result.objects.create(score=0.6, student=student1, exercise=exercise2, metric=metric)
+    result3 = Result.objects.create(score=0.7, student=student1, exercise=exercise3, metric=metric)
+    result10 = Result.objects.create(score=0.9, student=student2, exercise=exercise, metric=metric)
     return Response(status=status.HTTP_200_OK)
+
+
+@api_view(["POST"])
+def create_default_metric(request):
+    Metric.objects.create(id=2, title="Accuracy", description="This is a well known metric", 
+                          metric_file="metric_xZojFJp", created_by=None)
+    return Response(status=status.HTTP_201_CREATED)
+
 
 @api_view(["POST"])
 def create_class(request):
