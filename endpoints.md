@@ -13,7 +13,7 @@ https://mep-org.github.io/Prototype/#/professor/classes:
 
 https://mep-org.github.io/Prototype/#/professor/classes/1
   - [DONE] GET          /professors/888/classes/3 -----> Class with List<Student_name_id>
-  - [DONE]                           PUT/DELETE   /professors/888/classes/3        {Class}
+  - [DONE] PUT/DELETE   /professors/888/classes/3        {Class}
 
 https://mep-org.github.io/Prototype/#/professor/exercises
 + https://mep-org.github.io/Prototype/#/professor/exercises/add
