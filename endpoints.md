@@ -35,18 +35,18 @@ https://mep-org.github.io/Prototype/#/professor/metrics
 
 ### For students:
 https://mep-org.github.io/Prototype/#/student/home
-  - GET              /students/102534/classes -----> List<ClassPreview>
-  - GET              /students/102534/stats -----> Student_#doneExs_#currentExs_#nextEx_#rankLastEx
+  - [DONE] GET              /students/102534/classes -----> List<ClassPreview>
+  - [DONE] GET              /students/102534/stats -----> Student_#doneExs_#currentExs_#nextEx_#rankLastEx
 
 https://mep-org.github.io/Prototype/#/student/ViewClass:
 https://mep-org.github.io/Prototype/#/professor/classes/1
-  - GET              /students/102534/classes/3 -----> Class
+  - [DONE] GET              /students/102534/classes/3 -----> Class
 
 https://mep-org.github.io/Prototype/#/student/assignments
   - [DONE] GET	     /students/102534/assignments -----> List<ExercisePreview>
 
 https://mep-org.github.io/Prototype/#/student/assignments/1
-  - GET              /students/102534/assignments/3 -----> Exercise + [includes ranking]
+  - [DONE] GET              /students/102534/assignments/3 -----> Exercise + [includes ranking]
   - POST             /students/102534/assignments/3    {solution.py, results.csv}
 
 
