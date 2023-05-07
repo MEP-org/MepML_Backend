@@ -129,7 +129,7 @@ class TestStudentSerializer(APITestCase):
         serializer = StudentSerializer(self.student1)
 
         # Create expected data
-        expected_data = {'id': 1, 'user': {'email': 'jm@ua.pt', 'nmec': 102932, 'name': 'João Mário'}}
+        expected_data = {'id': self.student1.id, 'user': {'email': 'jm@ua.pt', 'nmec': 102932, 'name': 'João Mário'}}
 
         # Assert
         self.assertEqual(serializer.data, expected_data)
@@ -141,8 +141,8 @@ class TestStudentSerializer(APITestCase):
 
         # Create expected data
         expected_data = [
-            {'id': 1, 'user': {'email': 'jm@ua.pt', 'nmec': 102932, 'name': 'João Mário'}},
-            {'id': 2, 'user': {'email': 'rs@ua.pt', 'nmec': 102933, 'name': 'Rafa Silva'}},
+            {'id': self.student1.id, 'user': {'email': 'jm@ua.pt', 'nmec': 102932, 'name': 'João Mário'}},
+            {'id': self.student2.id, 'user': {'email': 'rs@ua.pt', 'nmec': 102933, 'name': 'Rafa Silva'}},
         ]
 
         # Assert
@@ -181,7 +181,7 @@ class TestProfessorSerializer(APITestCase):
         serializer = ProfessorSerializer(self.professor)
 
         # Create expected data
-        expected_data = {'id': 1, 'user': {'email': 'pd@ua.pt', 'nmec': 102931, 'name': 'Pedro Dias'}}
+        expected_data = {'id': self.professor.id, 'user': {'email': 'pd@ua.pt', 'nmec': 102931, 'name': 'Pedro Dias'}}
 
         # Assert
         self.assertEqual(serializer.data, expected_data)
@@ -193,7 +193,7 @@ class TestProfessorSerializer(APITestCase):
         
         # Create expected data
         expected_data = {
-            'id': 1,
+            'id': self.professor.id,
             'name': 'Pedro Dias',
         }
 
@@ -214,12 +214,12 @@ class TestClassSerializer(APITestCase):
 
         # Create expected data
         expected_data = {
-            'id': 1,
+            'id': self.class_.id,
             'name': 'Class 1',
             'image': '/media/image.png',
             'students': [
-                {'id': 1, 'user': {'email': 'jm@ua.pt', 'nmec': 102932, 'name': 'João Mário'}},
-                {'id': 2, 'user': {'email': 'rs@ua.pt', 'nmec': 102933, 'name': 'Rafa Silva'}},
+                {'id': self.student1.id, 'user': {'email': 'jm@ua.pt', 'nmec': 102932, 'name': 'João Mário'}},
+                {'id': self.student2.id, 'user': {'email': 'rs@ua.pt', 'nmec': 102933, 'name': 'Rafa Silva'}},
             ],
         }
 
@@ -234,13 +234,13 @@ class TestClassSerializer(APITestCase):
         # Create expected data
         expected_data = [
             {
-                'id': 1,
+                'id': self.class_.id,
                 'name': 'Class 1',
                 'num_students': 2,
                 'image': '/media/image.png',
             },
             {
-                'id': 2,
+                'id': self.class2.id,
                 'name': 'Class 2',
                 'num_students': 1,
                 'image': '/media/image2.png',
@@ -257,7 +257,7 @@ class TestClassSerializer(APITestCase):
 
         # Create expected data
         expected_data = {
-            'id': 1,
+            'id': self.class_.id,
             'name': 'Class 1',
             'image': '/media/image.png',
             'created_by': 1,
@@ -274,13 +274,13 @@ class TestClassSerializer(APITestCase):
 
         # Create expected data
         expected_data = {
-            'id': 1,
+            'id': self.class_.id,
             'name': 'Class 1',
-            'created_by': {'id': 1, 'user': {'email': 'pd@ua.pt', 'nmec': 102931, 'name': 'Pedro Dias'}},
+            'created_by': {'id': self.professor.id, 'user': {'email': 'pd@ua.pt', 'nmec': 102931, 'name': 'Pedro Dias'}},
             'image': '/media/image.png',
             'students': [
-                {'id': 1, 'user': {'email': 'jm@ua.pt', 'nmec': 102932, 'name': 'João Mário'}},
-                {'id': 2, 'user': {'email': 'rs@ua.pt', 'nmec': 102933, 'name': 'Rafa Silva'}},
+                {'id': self.student1.id, 'user': {'email': 'jm@ua.pt', 'nmec': 102932, 'name': 'João Mário'}},
+                {'id': self.student2.id, 'user': {'email': 'rs@ua.pt', 'nmec': 102933, 'name': 'Rafa Silva'}},
             ],
         }
 
@@ -295,18 +295,18 @@ class TestClassSerializer(APITestCase):
         # Create expected data
         expected_data = [
             {
-                'id': 1,
+                'id': self.class_.id,
                 'name': 'Class 1',
                 'num_students': 2,
                 'image': '/media/image.png',
-                'created_by': {'id': 1, 'user': {'email': 'pd@ua.pt', 'nmec': 102931, 'name': 'Pedro Dias'}},
+                'created_by': {'id': self.professor.id, 'user': {'email': 'pd@ua.pt', 'nmec': 102931, 'name': 'Pedro Dias'}},
             },
             {
-                'id': 2,
+                'id': self.class2.id,
                 'name': 'Class 2',
                 'num_students': 1,
                 'image': '/media/image2.png',
-                'created_by': {'id': 1, 'user': {'email': 'pd@ua.pt', 'nmec': 102931, 'name': 'Pedro Dias'}},
+                'created_by': {'id': self.professor.id, 'user': {'email': 'pd@ua.pt', 'nmec': 102931, 'name': 'Pedro Dias'}},
             },
         ]
 
@@ -321,7 +321,7 @@ class TestClassSerializer(APITestCase):
         # Create expected data
         expected_data = [
             {
-                'id': 1,
+                'id': self.class_.id,
                 'name': 'Class 1',
             }
         ]
@@ -342,11 +342,11 @@ class TestMetricSerializer(APITestCase):
 
         # Create expected data
         expected_data = {
-            'id': 1,
+            'id': self.metric1.id,
             'title': 'Metric 1',
             'description': 'Metric Description 1',
             'metric_file': '/media/metrica1',
-            'created_by': {'id': 1, 'user': {'email': 'pd@ua.pt', 'nmec': 102931, 'name': 'Pedro Dias'}},
+            'created_by': {'id': self.professor.id, 'user': {'email': 'pd@ua.pt', 'nmec': 102931, 'name': 'Pedro Dias'}},
         }
 
         # Assert
@@ -359,7 +359,7 @@ class TestMetricSerializer(APITestCase):
 
         # Create expected data
         expected_data = {
-            'id': 1,
+            'id': self.metric1.id,
             'title': 'Metric 1',
             'description': 'Metric Description 1',
         }
@@ -374,10 +374,10 @@ class TestMetricSerializer(APITestCase):
 
         # Create expected data
         expected_data = {
-            'id': 1,
+            'id': self.metric1.id,
             'title': 'Metric 1',
             'description': 'Metric Description 1',
-            'created_by': {'id': 1, 'user': {'email': 'pd@ua.pt', 'nmec': 102931, 'name': 'Pedro Dias'}},
+            'created_by': {'id': self.professor.id, 'user': {'email': 'pd@ua.pt', 'nmec': 102931, 'name': 'Pedro Dias'}},
         }
 
         # Assert
@@ -390,11 +390,11 @@ class TestMetricSerializer(APITestCase):
 
         # Create expected data
         expected_data = {
-            'id': 1,
+            'id': self.metric1.id,
             'title': 'Metric 1',
             'description': 'Metric Description 1',
             'metric_file': '/media/metrica1',
-            'created_by': 1,
+            'created_by': self.professor.id,
         }
 
         # Assert
@@ -414,7 +414,7 @@ class TestDatasetSerializer(APITestCase):
 
         # Create expected data
         expected_data = {
-            'id': 1,
+            'id': self.dataset.id,
             'train_name': 'train',
             'train_dataset': '/media/train_dataset',
             'train_upload_date': self.dataset.train_upload_date.strftime("%d/%m/%Y %H:%M:%S"),
@@ -480,7 +480,7 @@ class TestExerciseSerializer(APITestCase):
         # Create expected data
 
         expected_data = {
-            'id': 1,
+            'id': self.exercise.id,
             'title': 'Exercise 1',
             'subtitle': 'Subtitle 1',
             'description': 'DescriptionMD 1',
@@ -490,14 +490,14 @@ class TestExerciseSerializer(APITestCase):
             'limit_of_attempts': 3,
             'visibility': False,
             'metrics': [
-                {'id': 1, 'title': 'Metric 1', 'description': 'Metric Description 1', 'metric_file': '/media/metrica1', 'created_by': {'id': 1, 'user': {'email': 'pd@ua.pt', 'nmec': 102931, 'name': 'Pedro Dias'}}}
+                {'id': self.metric1.id, 'title': 'Metric 1', 'description': 'Metric Description 1', 'metric_file': '/media/metrica1', 'created_by': {'id': self.professor.id, 'user': {'email': 'pd@ua.pt', 'nmec': 102931, 'name': 'Pedro Dias'}}}
             ],
             'students_class': {
-                'id': 1,
+                'id': self.class_.id,
                 'name': 'Class 1',
             },
             'dataset': {
-                'id': 1,
+                'id': self.dataset.id,
                 'train_name': 'train',
                 'train_dataset': '/media/train_dataset',
                 'train_size': 0,
@@ -507,7 +507,7 @@ class TestExerciseSerializer(APITestCase):
                 'test_size': 0,
                 'test_upload_date': self.dataset.test_upload_date.strftime("%d/%m/%Y %H:%M:%S"),
             },
-            'created_by': {'id': 1, 'user': {'email': 'pd@ua.pt', 'nmec': 102931, 'name': 'Pedro Dias'}},
+            'created_by': {'id': self.professor.id, 'user': {'email': 'pd@ua.pt', 'nmec': 102931, 'name': 'Pedro Dias'}},
         }
 
         # Assert
@@ -520,7 +520,7 @@ class TestExerciseSerializer(APITestCase):
 
         # Create expected data
         expected_data = {
-            'id': 1,
+            'id': self.exercise.id,
             'title': 'Exercise 1',
             'subtitle': 'Subtitle 1',
             'description': 'DescriptionMD 1',
@@ -529,10 +529,10 @@ class TestExerciseSerializer(APITestCase):
             'deadline': self.exercise.deadline.isoformat()[:-6]+'Z',
             'limit_of_attempts': 3,
             'visibility': False,
-            'metrics': [1],
-            'students_class': 1,
-            'dataset': 1,
-            'created_by': 1,
+            'metrics': [self.metric1.id],
+            'students_class': self.class_.id,
+            'dataset': self.dataset.id,
+            'created_by': self.professor.id,
         }
 
         # Assert
@@ -545,14 +545,14 @@ class TestExerciseSerializer(APITestCase):
         
         # Create expected data
         expected_data = {
-            'id': 1,
+            'id': self.exercise.id,
             'title': 'Exercise 1',
             'subtitle': 'Subtitle 1',
             'publish_date': self.exercise.publish_date.strftime("%d/%m/%Y %H:%M:%S"),
             'deadline': self.exercise.deadline.strftime("%d/%m/%Y %H:%M:%S"),
             'limit_of_attempts': 3,
             'visibility': False,
-            'students_class': {'id': 1, 'name': 'Class 1', 'num_students': 2, 'image': '/media/image.png'},
+            'students_class': {'id': self.class_.id, 'name': 'Class 1', 'num_students': 2, 'image': '/media/image.png'},
             'num_answers': 2,
         }
 
@@ -566,11 +566,11 @@ class TestExerciseSerializer(APITestCase):
         
         # Create expected data
         expected_data = {
-            'id': 1,
+            'id': self.exercise.id,
             'title': 'Exercise 1',
             'subtitle': 'Subtitle 1',
             'publish_date': self.exercise.publish_date.strftime("%d/%m/%Y %H:%M:%S"),
-            'created_by': {'id': 1, 'name': 'Pedro Dias'},
+            'created_by': {'id': self.professor.id, 'name': 'Pedro Dias'},
             'dataset': {
                 'train_name': 'train',
                 'train_dataset': '/media/train_dataset',
@@ -589,15 +589,15 @@ class TestExerciseSerializer(APITestCase):
         
         # Create expected data
         expected_data = {
-            'id': 1,
+            'id': self.exercise.id,
             'title': 'Exercise 1',
             'subtitle': 'Subtitle 1',
             'publish_date': self.exercise.publish_date.strftime("%d/%m/%Y %H:%M:%S"),
             'deadline': self.exercise.deadline.strftime("%d/%m/%Y %H:%M:%S"),
             'limit_of_attempts': 3,
             'visibility': False,
-            'students_class': {'id': 1, 'name': 'Class 1'},
-            'metrics': [{'id': 1, 'title': 'Metric 1', 'description': 'Metric Description 1'}],
+            'students_class': {'id': self.class_.id, 'name': 'Class 1'},
+            'metrics': [{'id': self.metric1.id, 'title': 'Metric 1', 'description': 'Metric Description 1'}],
             'description': 'DescriptionMD 1',
             'evaluation': 'EvaluationMD 1',
             'dataset': {
@@ -622,14 +622,14 @@ class TestExerciseSerializer(APITestCase):
         
         # Create expected data
         expected_data = {
-            'id': 1,
+            'id': self.exercise.id,
             'title': 'Exercise 1',
             'subtitle': 'Subtitle 1',
             'publish_date': self.exercise.publish_date.strftime("%d/%m/%Y %H:%M:%S"),
             'deadline': self.exercise.deadline.strftime("%d/%m/%Y %H:%M:%S"),
             'limit_of_attempts': 3,
             'visibility': False,
-            'students_class': {'id': 1, 'name': 'Class 1'},
+            'students_class': {'id': self.class_.id, 'name': 'Class 1'},
             'num_answers': 2,
         }
 
@@ -643,7 +643,7 @@ class TestExerciseSerializer(APITestCase):
         
         # Create expected data
         expected_data = {
-            'id': 1,
+            'id': self.exercise.id,
             'title': 'Exercise 1',
             'subtitle': 'Subtitle 1',
             'description': 'DescriptionMD 1',
@@ -674,11 +674,11 @@ class TestResultSerializers(APITestCase):
 
         # Create expected data
         expected_data = {
-            'id': 1,
-            'student': {'id': 1, 'user': {'email': 'jm@ua.pt', 'nmec': 102932, 'name': 'João Mário'}},
+            'id': self.result1.id,
+            'student': {'id': self.student1.id, 'user': {'email': 'jm@ua.pt', 'nmec': 102932, 'name': 'João Mário'}},
             'score': 0.5,
             'date': self.result1.date.strftime("%d/%m/%Y %H:%M:%S"),
-            'metric': {'id': 1, 'title': 'Metric 1', 'description': 'Metric Description 1', 'metric_file': '/media/metrica1', 'created_by': {'id': 1, 'user': {'email': 'pd@ua.pt', 'nmec': 102931, 'name': 'Pedro Dias'}}},
+            'metric': {'id': self.metric1.id, 'title': 'Metric 1', 'description': 'Metric Description 1', 'metric_file': '/media/metrica1', 'created_by': {'id': self.professor.id, 'user': {'email': 'pd@ua.pt', 'nmec': 102931, 'name': 'Pedro Dias'}}},
         }
 
         # Assert
@@ -691,7 +691,7 @@ class TestResultSerializers(APITestCase):
         
         # Create expected data
         expected_data = {
-            'metric': {'id': 1, 'title': 'Metric 1', 'description': 'Metric Description 1'},
+            'metric': {'id': self.metric1.id, 'title': 'Metric 1', 'description': 'Metric Description 1'},
             'score': 0.5,
         }
 
@@ -717,7 +717,7 @@ class TestCodeSubmissionSerializers(APITestCase):
         
         # Create expected data
         expected_data = {
-            'id': 1,
+            'id': self.code_submission1.id,
             'file_name_result': 'result.py',
             'result_submission': '/media/result.py',
             'result_submission_size': 0,
@@ -750,18 +750,18 @@ class TestOtherSerializers(APITestCase):
         expected_data = {
             'my_metrics': [
                 {
-                    'id': 1,
+                    'id': self.metric1.id,
                     'title': 'Metric 1',
                     'description': 'Metric Description 1',
-                    'created_by': {'id': 1, 'user': {'email': 'pd@ua.pt', 'nmec': 102931, 'name': 'Pedro Dias'}},
+                    'created_by': {'id': self.professor.id, 'user': {'email': 'pd@ua.pt', 'nmec': 102931, 'name': 'Pedro Dias'}},
                 },
             ],
             'other_metrics': [
                 {
-                    'id': 2,
+                    'id': self.metric2.id,
                     'title': 'Metric 2',
                     'description': 'Metric Description 2',
-                    'created_by': {'id': 1, 'user': {'email': 'pd@ua.pt', 'nmec': 102931, 'name': 'Pedro Dias'}},
+                    'created_by': {'id': self.professor.id, 'user': {'email': 'pd@ua.pt', 'nmec': 102931, 'name': 'Pedro Dias'}},
                 },
             ],
         }
@@ -782,7 +782,7 @@ class TestOtherSerializers(APITestCase):
         # Create expected data
         expected_data = {
             'exercise': {
-                'id': 1,
+                'id': self.exercise.id,
                 'title': 'Exercise 1',
                 'subtitle': 'Subtitle 1',
                 'description': 'DescriptionMD 1',
@@ -792,14 +792,14 @@ class TestOtherSerializers(APITestCase):
                 'limit_of_attempts': 3,
                 'visibility': False,
                 'metrics': [
-                    {'id': 1, 'title': 'Metric 1', 'description': 'Metric Description 1', 'created_by': {'id': 1, 'user': {'email': 'pd@ua.pt', 'nmec': 102931, 'name': 'Pedro Dias'}}},
+                    {'id': self.metric1.id, 'title': 'Metric 1', 'description': 'Metric Description 1', 'created_by': {'id': self.professor.id, 'user': {'email': 'pd@ua.pt', 'nmec': 102931, 'name': 'Pedro Dias'}}},
                 ],
                 'students_class': {
-                    'id': 1,
+                    'id': self.class_.id,
                     'name': 'Class 1',
                 },
                 'dataset': {
-                    'id': 1,
+                    'id': self.dataset.id,
                     'train_name': 'train',
                     'train_dataset': '/media/train_dataset',
                     'train_upload_date': self.dataset.train_upload_date.strftime("%d/%m/%Y %H:%M:%S"),
@@ -809,19 +809,19 @@ class TestOtherSerializers(APITestCase):
                     'test_upload_date': self.dataset.test_upload_date.strftime("%d/%m/%Y %H:%M:%S"),
                     'test_size':0,
                 },
-                'created_by': {'id': 1, 'user': {'email': 'pd@ua.pt', 'nmec': 102931, 'name': 'Pedro Dias'}},
+                'created_by': {'id': self.professor.id, 'user': {'email': 'pd@ua.pt', 'nmec': 102931, 'name': 'Pedro Dias'}},
             },
             'results': [
                 {
-                    'student': {'id': 1, 'user': {'email': 'jm@ua.pt', 'nmec': 102932, 'name': 'João Mário'}},
+                    'student': {'id': self.student1.id, 'user': {'email': 'jm@ua.pt', 'nmec': 102932, 'name': 'João Mário'}},
                     'results': [
                         {'date': self.result1.date.strftime("%d/%m/%Y %H:%M:%S"), 'score': 0.5},
                                 ],
                 },
                 {
-                    'student': {'id': 2, 'user': {'email': 'rs@ua.pt', 'nmec': 102933, 'name': 'Rafa Silva'}},
+                    'student': {'id': self.student2.id, 'user': {'email': 'rs@ua.pt', 'nmec': 102933, 'name': 'Rafa Silva'}},
                     'results': [
-                        {'date': self.result2.date.strftime("%d/%m/%Y %H:%M:%S"), 'score': 0.9},
+                        {'date': self.result10.date.strftime("%d/%m/%Y %H:%M:%S"), 'score': 0.9},
                     ],
                 }
             ]
@@ -842,20 +842,20 @@ class TestOtherSerializers(APITestCase):
         expected_data = {
             'exercises': [
                 {
-                    'id': 1,
+                    'id': self.exercise.id,
                     'title': 'Exercise 1',
                     'subtitle': 'Subtitle 1',
                     'publish_date': self.exercise.publish_date.strftime("%d/%m/%Y %H:%M:%S"),
                     'deadline': self.exercise.deadline.strftime("%d/%m/%Y %H:%M:%S"),
                     'limit_of_attempts': 3,
                     'visibility': False,
-                    'students_class': {'id': 1, 'name': 'Class 1', 'num_students': 2, 'image': '/media/image.png'},
+                    'students_class': {'id': self.class_.id, 'name': 'Class 1', 'num_students': 2, 'image': '/media/image.png'},
                     'num_answers': 2,
                 }
             ],
             'classes': [
                 {
-                    'id': 1,
+                    'id': self.class_.id,
                     'name': 'Class 1',
                 }
             ]
@@ -876,11 +876,11 @@ class TestOtherSerializers(APITestCase):
         expected_data = {
             'exercises': [
                 {
-                    'id': 1,
+                    'id': self.exercise.id,
                     'title': 'Exercise 1',
                     'subtitle': 'Subtitle 1',
                     'publish_date': self.exercise.publish_date.strftime("%d/%m/%Y %H:%M:%S"),
-                    'created_by': {'id': 1, 'name': 'Pedro Dias'},
+                    'created_by': {'id': self.professor.id, 'name': 'Pedro Dias'},
                     'dataset': {
                         'train_name': 'train',
                         'train_dataset': '/media/train_dataset',
@@ -891,7 +891,7 @@ class TestOtherSerializers(APITestCase):
             ],
             'professors': [
                 {
-                    'id': 1,
+                    'id': self.professor.id,
                     'name': 'Pedro Dias',
                 }
             ]
@@ -911,15 +911,15 @@ class TestOtherSerializers(APITestCase):
         # Create expected data
         expected_data = {
             'exercise': {
-                'id': 1,
+                'id': self.exercise.id,
                 'title': 'Exercise 1',
                 'subtitle': 'Subtitle 1',
                 'publish_date': self.exercise.publish_date.strftime("%d/%m/%Y %H:%M:%S"),
                 'deadline': self.exercise.deadline.strftime("%d/%m/%Y %H:%M:%S"),
                 'limit_of_attempts': 3,
                 'visibility': False,
-                'students_class': {'id': 1, 'name': 'Class 1'},
-                'metrics': [{'id': 1, 'title': 'Metric 1', 'description': 'Metric Description 1'}],
+                'students_class': {'id': self.class_.id, 'name': 'Class 1'},
+                'metrics': [{'id': self.metric1.id, 'title': 'Metric 1', 'description': 'Metric Description 1'}],
                 'description': 'DescriptionMD 1',
                 'evaluation': 'EvaluationMD 1',
                 'dataset': {
@@ -935,7 +935,7 @@ class TestOtherSerializers(APITestCase):
             },
             'my_results': [
                 {
-                    'metric': {'id': 1, 'title': 'Metric 1', 'description': 'Metric Description 1'},
+                    'metric': {'id': self.metric1.id, 'title': 'Metric 1', 'description': 'Metric Description 1'},
                     'score': 0.5,
                 }
             ],
@@ -966,15 +966,15 @@ class TestOtherSerializers(APITestCase):
         expected_data = {
             'assignment': {
                 'exercise': {
-                    'id': 1,
+                    'id': self.exercise.id,
                     'title': 'Exercise 1',
                     'subtitle': 'Subtitle 1',
                     'publish_date': self.exercise.publish_date.strftime("%d/%m/%Y %H:%M:%S"),
                     'deadline': self.exercise.deadline.strftime("%d/%m/%Y %H:%M:%S"),
                     'limit_of_attempts': 3,
                     'visibility': False,
-                    'students_class': {'id': 1, 'name': 'Class 1'},
-                    'metrics': [{'id': 1, 'title': 'Metric 1', 'description': 'Metric Description 1'}],
+                    'students_class': {'id': self.class_.id, 'name': 'Class 1'},
+                    'metrics': [{'id': self.metric1.id, 'title': 'Metric 1', 'description': 'Metric Description 1'}],
                     'description': 'DescriptionMD 1',
                     'evaluation': 'EvaluationMD 1',
                     'dataset': {
@@ -990,22 +990,22 @@ class TestOtherSerializers(APITestCase):
                 },
                 'my_results': [
                     {
-                        'metric': {'id': 1, 'title': 'Metric 1', 'description': 'Metric Description 1'},
+                        'metric': {'id': self.metric1.id, 'title': 'Metric 1', 'description': 'Metric Description 1'},
                         'score': 0.5,
                     }
                 ],
             },
             'all_results': [
                 {
-                    'id': 1,
-                    'student': {'id': 1, 'user': {'email': 'jm@ua.pt', 'nmec': 102932, 'name': 'João Mário'}},
+                    'id': self.result1.id,
+                    'student': {'id': self.student1.id, 'user': {'email': 'jm@ua.pt', 'nmec': 102932, 'name': 'João Mário'}},
                     'score': 0.5,
                     'date': self.result1.date.strftime("%d/%m/%Y %H:%M:%S"),
-                    'metric': {'id': 1, 'title': 'Metric 1', 'description': 'Metric Description 1', 'metric_file': '/media/metrica1', 'created_by': {'id': 1, 'user': {'email': 'pd@ua.pt', 'nmec': 102931, 'name': 'Pedro Dias'}}},
+                    'metric': {'id': self.metric1.id, 'title': 'Metric 1', 'description': 'Metric Description 1', 'metric_file': '/media/metrica1', 'created_by': {'id': self.professor.id, 'user': {'email': 'pd@ua.pt', 'nmec': 102931, 'name': 'Pedro Dias'}}},
                 },
             ],
             'submission': {
-                'id': 1,
+                'id': self.code_submission1.id,
                 'file_name_result': 'result.py',
                 'result_submission': '/media/result.py',
                 'result_submission_size': 0,
@@ -1032,7 +1032,7 @@ class TestOtherSerializers(APITestCase):
         expected_data = {
             'assignments': [
                 {
-                    'id': 1,
+                    'id': self.exercise.id,
                     'title': 'Exercise 1',
                     'subtitle': 'Subtitle 1',
                     'publish_date': self.exercise.publish_date.strftime("%d/%m/%Y %H:%M:%S"),
@@ -1040,7 +1040,7 @@ class TestOtherSerializers(APITestCase):
                     'limit_of_attempts': 3,
                     'visibility': False,
                     'students_class': {
-                        'id': 1,
+                        'id': self.class_.id,
                         'name': 'Class 1',
                     },
                     'num_answers': 2,
@@ -1048,7 +1048,7 @@ class TestOtherSerializers(APITestCase):
             ],
             'classes': [
                 {
-                    'id': 1,
+                    'id': self.class_.id,
                     'name': 'Class 1',
                 }
             ]
