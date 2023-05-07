@@ -8,7 +8,7 @@ from MepML.models import Class
 
 def get_class_info(request, student_id, class_id):
     classes = Class.objects.filter(id = class_id)
-    serializer = StudentClassSerializer(classes, many=True)
+    serializer = StudentClassSerializer(classes)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
