@@ -86,6 +86,14 @@ class Student(models.Model):
         return next_deadline.deadline
 
     @property
+    def next_deadline_title(self):
+        # Next deadline in which the deadline has not passed
+        next_deadline = Exercise.objects.filter(students_class__students=self, deadline__gt=datetime.datetime.now(timezone.utc)).order_by('deadline').first()
+        if next_deadline is None:
+            return None
+        return next_deadline.title
+
+    @property
     def last_ranking(self):
         # Last exercise that the student has done
         last_submission = CodeSubmission.objects.filter(student=self).order_by('-result_submission_date').first()
