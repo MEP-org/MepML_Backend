@@ -8,7 +8,7 @@ from rest_framework import status
 
 from MepML.models import CodeSubmission, Dataset, Exercise, Professor, Result, User, Student, Class, Metric
 from MepML.serializers import DatasetSerializer, ExercisePostSerializer, ExerciseSerializer, MetricOwnSerializer, MetricSerializer, \
-    MetricViewerSerializer, ProfessorClassPostSerializer, ProfessorClassSerializer, ProfessorClassesSerializer, ProfessorExerciseResultSerializer, ProfessorExerciseSerializer, ProfessorExercisesExerciseSerializer, ProfessorExercisesSerializer, ProfessorMetricPostSerializer, ProfessorMetricsSerializer, ProfessorSerializer, PublicExerciseSerializer, PublicExercisesExerciseSerializer, PublicExercisesExerciseTrainingDatasetSerializer, PublicExercisesProfessorsSerializer, PublicExercisesSerializer, SimpleClassSerializer, StudentAssignmentCodeSubmissionSerializer, StudentAssignmentExerciseAndOwnResultsSerializer, StudentAssignmentExerciseDatasetSerializer, StudentAssignmentExerciseOwnResultsSerializer, StudentAssignmentExerciseSerializer, StudentAssignmentSerializer, StudentAssignmentsExerciseSerializer, StudentAssignmentsSerializer, StudentClassSerializer, StudentClassesSerializer, StudentHomeSerializer, UserSerializer, StudentSerializer
+    MetricViewerSerializer, ProfessorClassPostSerializer, ProfessorClassSerializer, ProfessorClassesSerializer, ProfessorCreateExerciseGETSerializer, ProfessorExerciseResultSerializer, ProfessorExerciseSerializer, ProfessorExercisesExerciseSerializer, ProfessorExercisesSerializer, ProfessorMetricPostSerializer, ProfessorMetricsSerializer, ProfessorSerializer, PublicExerciseSerializer, PublicExercisesExerciseSerializer, PublicExercisesExerciseTrainingDatasetSerializer, PublicExercisesProfessorsSerializer, PublicExercisesSerializer, SimpleClassSerializer, StudentAssignmentCodeSubmissionSerializer, StudentAssignmentExerciseAndOwnResultsSerializer, StudentAssignmentExerciseDatasetSerializer, StudentAssignmentExerciseOwnResultsSerializer, StudentAssignmentExerciseSerializer, StudentAssignmentSerializer, StudentAssignmentsExerciseSerializer, StudentAssignmentsSerializer, StudentClassSerializer, StudentClassesSerializer, StudentHomeSerializer, UserSerializer, StudentSerializer
 
 
 from django.utils.timezone import make_aware
@@ -1054,6 +1054,43 @@ class TestOtherSerializers(APITestCase):
                     'name': 'Class 1',
                 }
             ]
+        }
+
+        # Assert
+        self.assertEqual(serializer.data, expected_data)
+
+    
+    def test_professor_create_exercise_get_serializer(self):
+        # Serialize
+        serializer = ProfessorCreateExerciseGETSerializer(instance={
+            'metrics': [self.metric1, self.metric2],
+            'classes': [self.class_, self.class2],
+        })
+
+        # Create expected data
+        expected_data = {
+            'metrics': [
+                {
+                    'id': self.metric1.id,
+                    'title': 'Metric 1',
+                    'description': 'Metric Description 1',
+                },
+                {
+                    'id': self.metric2.id,
+                    'title': 'Metric 2',
+                    'description': 'Metric Description 2',
+                },
+            ],
+            'classes': [
+                {
+                    'id': self.class_.id,
+                    'name': 'Class 1',
+                },
+                {
+                    'id': self.class2.id,
+                    'name': 'Class 2',
+                },
+            ],
         }
 
         # Assert

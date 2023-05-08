@@ -459,3 +459,15 @@ class StudentAssignmentsSerializer(serializers.Serializer):
             'assignments': data['exercises'],
             'classes': data['classes'],
         }
+    
+
+class ProfessorCreateExerciseGETSerializer(serializers.Serializer):
+    metrics = MetricOwnSerializer(many=True)
+    classes = SimpleClassSerializer(many=True)
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        return {
+            'metrics': data['metrics'],
+            'classes': data['classes'],
+        }

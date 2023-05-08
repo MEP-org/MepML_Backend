@@ -21,7 +21,7 @@ from django.contrib import admin
 from django.urls import path
 from MepML import views
 from MepML.webservices import ws_classes, ws_manage_class, ws_metrics, ws_manage_metric,\
-    ws_exercises, ws_manage_exercise, ws_public_exercise, ws_public_exercises, ws_assignments, \
+    ws_exercises, ws_manage_exercise, ws_metrics_classes, ws_public_exercise, ws_public_exercises, ws_assignments, \
     ws_student_class, ws_home, ws_student_classes, ws_student_assignment
 from django.conf import settings
 from django.conf.urls.static import static
@@ -32,6 +32,7 @@ urlpatterns = [
     path("professors/<int:prof_id>/metrics", ws_metrics.handle),
     path("professors/<int:prof_id>/exercises", ws_exercises.handle),
     path("professors/<int:prof_id>/exercises/<int:exercise_id>", ws_manage_exercise.handle),
+    path("professors/<int:prof_id>/metricsclasses", ws_metrics_classes.handle),
     path("publicexercises/", ws_public_exercises.handle),
     path("publicexercises/<int:exercise_id>", ws_public_exercise.handle),
     path("students/<int:student_id>/assignments", ws_assignments.handle),
