@@ -10,6 +10,7 @@ from MepML.models import CodeSubmission, Dataset, Exercise, Professor, Result, U
 from MepML.serializers import DatasetSerializer, ExercisePostSerializer, ExerciseSerializer, MetricOwnSerializer, MetricSerializer, \
     MetricViewerSerializer, ProfessorClassPostSerializer, ProfessorClassSerializer, ProfessorClassesSerializer, ProfessorExerciseResultSerializer, ProfessorExerciseSerializer, ProfessorExercisesExerciseSerializer, ProfessorExercisesSerializer, ProfessorMetricPostSerializer, ProfessorMetricsSerializer, ProfessorSerializer, PublicExerciseSerializer, PublicExercisesExerciseSerializer, PublicExercisesExerciseTrainingDatasetSerializer, PublicExercisesProfessorsSerializer, PublicExercisesSerializer, SimpleClassSerializer, StudentAssignmentCodeSubmissionSerializer, StudentAssignmentExerciseAndOwnResultsSerializer, StudentAssignmentExerciseDatasetSerializer, StudentAssignmentExerciseOwnResultsSerializer, StudentAssignmentExerciseSerializer, StudentAssignmentSerializer, StudentAssignmentsExerciseSerializer, StudentAssignmentsSerializer, StudentClassSerializer, StudentClassesSerializer, StudentHomeSerializer, UserSerializer, StudentSerializer
 
+
 from django.utils.timezone import make_aware
 
 # https://www.20tab.com/en/blog/test-python-mocking/
