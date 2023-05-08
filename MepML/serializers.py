@@ -148,7 +148,7 @@ class DatasetSerializer(serializers.ModelSerializer):
         model = Dataset
         fields = ['id', "train_name", "train_dataset", "train_upload_date", "train_size", 
                   "test_name", "test_dataset", "test_upload_date", "test_size"]
-        
+
 
 class PublicExercisesExerciseTrainingDatasetSerializer(serializers.ModelSerializer):
     train_upload_date = serializers.SerializerMethodField()
@@ -294,6 +294,7 @@ class PublicExerciseSerializer(serializers.ModelSerializer):
 
         
 
+
 # ------------------------------ Result Serializers ------------------------------ Tested
 class ProfessorExerciseResultSerializer(serializers.ModelSerializer):
     student = StudentSerializer()
@@ -358,6 +359,7 @@ class ProfessorMetricsSerializer(serializers.Serializer):
             'my_metrics': data['my_metrics'],
             'other_metrics': data['other_metrics'],
         }
+
 
 
 class ProfessorExerciseSerializer(serializers.Serializer):
@@ -434,7 +436,6 @@ class StudentAssignmentExerciseAndOwnResultsSerializer(serializers.Serializer):
             'my_results': data['my_results'],
         }
 
-
 class StudentAssignmentSerializer(serializers.Serializer):
     assignment = StudentAssignmentExerciseAndOwnResultsSerializer()
     all_results = ProfessorExerciseResultSerializer(many=True)
@@ -447,7 +448,6 @@ class StudentAssignmentSerializer(serializers.Serializer):
             'all_results': data['all_results'],
             'submission': data['submission'],
         }
-
 
 class StudentAssignmentsSerializer(serializers.Serializer):
     exercises = StudentAssignmentsExerciseSerializer(many=True)
