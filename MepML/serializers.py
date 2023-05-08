@@ -2,13 +2,14 @@ from rest_framework import serializers
 from MepML.models import CodeSubmission, Professor, Student, Class, Dataset, Metric, Exercise, User, Result
 
 
-# ------------------------------ User Type Serializers ------------------------------
+# ------------------------------ User Serializers ------------------------------ Tested
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('email', 'nmec', 'name')
 
 
+# ------------------------------ Student Serializers ------------------------------ Tested
 class StudentSerializer(serializers.ModelSerializer):
     user = UserSerializer()
 
@@ -17,6 +18,18 @@ class StudentSerializer(serializers.ModelSerializer):
         fields = ('id', 'user')
 
 
+class StudentHomeSerializer(serializers.ModelSerializer):
+    next_deadline = serializers.SerializerMethodField()
+
+    #format date
+    def get_next_deadline(self, obj):
+        return obj.next_deadline.strftime("%d/%m/%Y %H:%M:%S")
+
+    class Meta:
+        model = Student
+        fields = ["num_exercises", "num_submissions", "next_deadline", "next_deadline_title", "last_ranking"]
+
+# ------------------------------ Professor Serializers ------------------------------ Tested
 class ProfessorSerializer(serializers.ModelSerializer):
     user = UserSerializer()
 
@@ -25,7 +38,18 @@ class ProfessorSerializer(serializers.ModelSerializer):
         fields = ('id', 'user')
 
 
-# ------------------------------ Professor Class Serializers ------------------------------
+class PublicExercisesProfessorsSerializer(serializers.ModelSerializer):
+    name = serializers.SerializerMethodField()
+
+    def get_name(self, obj):
+        return obj.user.name
+
+    class Meta:
+        model = Professor
+        fields = ('id', 'name')
+
+
+# ------------------------------ Class Serializers ------------------------------ Tested
 class ProfessorClassSerializer(serializers.ModelSerializer):
     students = StudentSerializer(many=True)
 
@@ -51,7 +75,6 @@ class ProfessorClassPostSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-# ------------------------------ Student Class Serializers ------------------------------
 class StudentClassSerializer(serializers.ModelSerializer):
     students = StudentSerializer(many=True)
     created_by = ProfessorSerializer()
@@ -73,7 +96,13 @@ class StudentClassesSerializer(serializers.ModelSerializer):
         fields = ["id", "name", "num_students", "image", "created_by"]
 
 
-# ------------------------------ Metric Serializers ------------------------------
+class SimpleClassSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Class
+        fields = ['id', "name"]
+
+
+# ------------------------------ Metric Serializers ------------------------------ Tested
 class MetricSerializer(serializers.ModelSerializer):
     created_by = ProfessorSerializer()
 
@@ -96,44 +125,77 @@ class MetricViewerSerializer(serializers.ModelSerializer):
         fields = ['id', "title", "description", "created_by"]
 
 
-class ProfessorMetricsSerializer(serializers.Serializer):
-    my_metrics = MetricOwnSerializer(many=True)
-    other_metrics = MetricViewerSerializer(many=True)
-
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-        return {
-            'my_metrics': data['my_metrics'],
-            'other_metrics': data['other_metrics'],
-        }
-
-
 class ProfessorMetricPostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Metric
         fields = "__all__"
 
 
-# ------------------------------ Dataset Serializers ------------------------------
+# ------------------------------ Dataset Serializers ------------------------------ Tested
 class DatasetSerializer(serializers.ModelSerializer):
+    train_upload_date = serializers.SerializerMethodField()
+    test_upload_date = serializers.SerializerMethodField()
+
+    #format date
+    def get_train_upload_date(self, obj):
+        return obj.train_upload_date.strftime("%d/%m/%Y %H:%M:%S")
+
+    #format date
+    def get_test_upload_date(self, obj):
+        return obj.test_upload_date.strftime("%d/%m/%Y %H:%M:%S")
+    
     class Meta:
         model = Dataset
         fields = ['id', "train_name", "train_dataset", "train_upload_date", "train_size", 
                   "test_name", "test_dataset", "test_upload_date", "test_size"]
 
 
-# ------------------------------ Exercise Serializers ------------------------------
-class ExerciseClassSerializer(serializers.ModelSerializer):
+class PublicExercisesExerciseTrainingDatasetSerializer(serializers.ModelSerializer):
+    train_upload_date = serializers.SerializerMethodField()
+
+    #format date
+    def get_train_upload_date(self, obj):
+        return obj.train_upload_date.strftime("%d/%m/%Y %H:%M:%S")
+    
     class Meta:
-        model = Class
-        fields = ['id', "name"]
+        model = Dataset
+        fields = ["train_name", "train_dataset", "train_size", "train_upload_date"]
 
 
+class StudentAssignmentExerciseDatasetSerializer(serializers.ModelSerializer):
+    train_upload_date = serializers.SerializerMethodField()
+    test_upload_date = serializers.SerializerMethodField()
+
+    #format date
+    def get_train_upload_date(self, obj):
+        return obj.train_upload_date.strftime("%d/%m/%Y %H:%M:%S")
+
+    #format date
+    def get_test_upload_date(self, obj):
+        return obj.test_upload_date.strftime("%d/%m/%Y %H:%M:%S")
+
+    class Meta:
+        model = Dataset
+        fields = ["train_name", "train_dataset", "train_size", "train_upload_date",
+                  "test_name", "test_dataset", "test_size", "test_upload_date"]
+        
+
+# ------------------------------ Exercise Serializers ------------------------------ Tested
 class ExerciseSerializer(serializers.ModelSerializer):
     created_by = ProfessorSerializer()
     dataset = DatasetSerializer()
     metrics = MetricSerializer(many=True)
-    students_class = ExerciseClassSerializer()
+    students_class = SimpleClassSerializer()
+    publish_date = serializers.SerializerMethodField()
+    deadline = serializers.SerializerMethodField()
+
+    #format date
+    def get_publish_date(self, obj):
+        return obj.publish_date.strftime("%d/%m/%Y %H:%M:%S")
+
+    #format date
+    def get_deadline(self, obj):
+        return obj.deadline.strftime("%d/%m/%Y %H:%M:%S")
 
     class Meta:
         model = Exercise
@@ -146,45 +208,202 @@ class ExercisePostSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-# ------------------------------ Professor Exercise Serializers ------------------------------
-class ProfessorExerciseResultSerializer(serializers.ModelSerializer):
-    student = StudentSerializer()
-    metric = MetricSerializer()
-
-    class Meta:
-        model = Result
-        fields = ['id', "score", "date", "student", "metric"]
-
-
-class ProfessorExerciseSerializer(serializers.Serializer):
-    exercise = ExerciseSerializer()
-    results = ProfessorExerciseResultSerializer(many=True)
-
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-        return {
-            'exercise': data['exercise'],
-            'results': data['results'],
-        }
-
-
-class ProfessorExercisesClassSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Class
-        fields = ['id', "name"]
-
-
 class ProfessorExercisesExerciseSerializer(serializers.ModelSerializer):
     students_class = ProfessorClassesSerializer()
+    publish_date = serializers.SerializerMethodField()
+    deadline = serializers.SerializerMethodField()
+
+    #format date
+    def get_publish_date(self, obj):
+        return obj.publish_date.strftime("%d/%m/%Y %H:%M:%S")
+
+    #format date
+    def get_deadline(self, obj):
+        return obj.deadline.strftime("%d/%m/%Y %H:%M:%S")
 
     class Meta:
         model = Exercise
         fields = ["id", "title", "subtitle", "publish_date", "deadline", "limit_of_attempts", "visibility", "students_class", "num_answers"]
 
 
+class PublicExercisesExerciseSerializer(serializers.ModelSerializer):
+    created_by = PublicExercisesProfessorsSerializer()
+    dataset = PublicExercisesExerciseTrainingDatasetSerializer()
+    publish_date = serializers.SerializerMethodField()
+
+    #format date
+    def get_publish_date(self, obj):
+        return obj.publish_date.strftime("%d/%m/%Y %H:%M:%S")
+
+    class Meta:
+        model = Exercise
+        fields = ["id", "title", "subtitle", "publish_date", "created_by", "dataset"]
+
+
+class StudentAssignmentExerciseSerializer(serializers.ModelSerializer):
+    dataset = StudentAssignmentExerciseDatasetSerializer()
+    metrics = MetricOwnSerializer(many=True)
+    students_class = SimpleClassSerializer()
+    publish_date = serializers.SerializerMethodField()
+    deadline = serializers.SerializerMethodField()
+
+    #format date
+    def get_publish_date(self, obj):
+        return obj.publish_date.strftime("%d/%m/%Y %H:%M:%S")
+
+    #format date
+    def get_deadline(self, obj):
+        return obj.deadline.strftime("%d/%m/%Y %H:%M:%S")
+
+    class Meta:
+        model = Exercise
+        fields = ["id", "title", "subtitle", "publish_date", "deadline", "limit_of_attempts", "visibility", 
+                  "students_class", "metrics", "description", "evaluation", "dataset"]
+        
+
+class StudentAssignmentsExerciseSerializer(serializers.ModelSerializer):
+    students_class = SimpleClassSerializer()
+    publish_date = serializers.SerializerMethodField()
+    deadline = serializers.SerializerMethodField()
+
+    #format date
+    def get_publish_date(self, obj):
+        return obj.publish_date.strftime("%d/%m/%Y %H:%M:%S")
+
+    #format date
+    def get_deadline(self, obj):
+        return obj.deadline.strftime("%d/%m/%Y %H:%M:%S")
+
+    class Meta:
+        model = Exercise
+        fields = ["id", "title", "subtitle", "publish_date", "deadline", "limit_of_attempts", 
+                  "visibility", "students_class", "num_answers"]
+        
+
+class PublicExerciseSerializer(serializers.ModelSerializer):
+    dataset = PublicExercisesExerciseTrainingDatasetSerializer()
+    publish_date = serializers.SerializerMethodField()
+
+    #format date
+    def get_publish_date(self, obj):
+        return obj.publish_date.strftime("%d/%m/%Y %H:%M:%S")
+
+    class Meta:
+        model = Exercise
+        fields = ["id", "title", "subtitle", "description", "publish_date", "visibility", "dataset"]
+
+        
+
+
+# ------------------------------ Result Serializers ------------------------------ Tested
+class ProfessorExerciseResultSerializer(serializers.ModelSerializer):
+    student = StudentSerializer()
+    metric = MetricSerializer()
+    date = serializers.SerializerMethodField()
+
+    #format date
+    def get_date(self, obj):
+        return obj.date.strftime("%d/%m/%Y %H:%M:%S")
+
+    class Meta:
+        model = Result
+        fields = ['id', "score", "date", "student", "metric"]
+
+
+class StudentAssignmentExerciseOwnResultsSerializer(serializers.ModelSerializer):
+    metric = MetricOwnSerializer()
+
+    class Meta:
+        model = Result
+        fields = ['metric', 'score']
+
+
+# ------------------------------ CodeSubmission Serializers ------------------------------ Tested
+class StudentAssignmentCodeSubmissionSerializer(serializers.ModelSerializer):
+    result_submission_date = serializers.SerializerMethodField()
+    code_submission_date = serializers.SerializerMethodField()
+    result_submission_size = serializers.SerializerMethodField()
+    code_submission_size = serializers.SerializerMethodField()
+
+    #format date
+    def get_result_submission_date(self, obj):
+        return obj.result_submission_date.strftime("%d/%m/%Y %H:%M:%S")
+
+    #format date
+    def get_code_submission_date(self, obj):
+        return obj.code_submission_date.strftime("%d/%m/%Y %H:%M:%S")
+    
+    #Get file size
+    def get_result_submission_size(self, obj):
+        return obj.result_submission.size
+    
+    #Get file size
+    def get_code_submission_size(self, obj):
+        return obj.code_submission.size
+    
+    class Meta:
+        model = CodeSubmission
+        fields = ['id', "file_name_result", "result_submission", "result_submission_size", "result_submission_date", "file_name_code", 
+                  "code_submission", "code_submission_size", "code_submission_date"]
+        
+
+# ------------------------------ Other Serializers ------------------------------ Tested
+
+class ProfessorMetricsSerializer(serializers.Serializer):
+    my_metrics = MetricViewerSerializer(many=True)
+    other_metrics = MetricViewerSerializer(many=True)
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        return {
+            'my_metrics': data['my_metrics'],
+            'other_metrics': data['other_metrics'],
+        }
+
+
+
+class ProfessorExerciseSerializer(serializers.Serializer):
+    exercise = ExerciseSerializer()
+    exercise_class_students = StudentSerializer(many=True)
+    results = ProfessorExerciseResultSerializer(many=True)
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+
+        results = []
+
+        #Obtain all students in the exercise class
+        for student in data['exercise_class_students']:
+            # Get all results from the student in the exercise
+            student_results = [i for i in data['results'] if i['student'] == student and i['metric'] in data['exercise']['metrics']] # results of the student in the exercise
+
+            # Order based on the metric order in the exercise
+            student_results = sorted(student_results, key=lambda k: data['exercise']['metrics'].index(k['metric']))
+
+            results.append({
+                'student': student,
+                'results': [
+                    {
+                    'date': i['date'],
+                    'score': i['score'],
+                    }
+                    for i in student_results
+                ]
+            })
+
+        for i in data["exercise"]["metrics"]:
+            i.pop("metric_file", None)
+
+
+        return {
+            'exercise': data['exercise'],
+            'results': results,
+        }
+
+
 class ProfessorExercisesSerializer(serializers.Serializer):
     exercises = ProfessorExercisesExerciseSerializer(many=True)
-    classes = ProfessorExercisesClassSerializer(many=True)
+    classes = SimpleClassSerializer(many=True)
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
@@ -192,34 +411,6 @@ class ProfessorExercisesSerializer(serializers.Serializer):
             'exercises': data['exercises'],
             'classes': data['classes'],
         }
-
-
-# ------------------------------ Public Exercises ------------------------------
-class PublicExercisesProfessorsSerializer(serializers.ModelSerializer):
-    name = serializers.SerializerMethodField()
-
-    def get_name(self, obj):
-        return obj.user.name
-
-    class Meta:
-        model = Professor
-        fields = ('id', 'name')
-
-
-class PublicExercisesExerciseTrainingDatasetSerializer(serializers.ModelSerializer):
-    
-    class Meta:
-        model = Dataset
-        fields = ["train_dataset", "train_size"]
-
-
-class PublicExercisesExerciseSerializer(serializers.ModelSerializer):
-    created_by = PublicExercisesProfessorsSerializer()
-    dataset = PublicExercisesExerciseTrainingDatasetSerializer()
-
-    class Meta:
-        model = Exercise
-        fields = ["id", "title", "subtitle", "publish_date", "created_by", "dataset"]
 
 
 class PublicExercisesSerializer(serializers.Serializer):
@@ -234,34 +425,6 @@ class PublicExercisesSerializer(serializers.Serializer):
         }
 
 
-# ------------------------------ Student Assignment Serializers ------------------------------
-class StudentAssignmentExerciseDatasetSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Dataset
-        fields = ["train_name", "train_dataset", "train_size", "train_upload_date",
-                  "test_name", "test_dataset", "test_size", "test_upload_date"]
-
-
-class StudentAssignmentExerciseOwnResultsSerializer(serializers.ModelSerializer):
-    metric = MetricOwnSerializer()
-
-    class Meta:
-        model = Result
-        fields = ['metric', 'score']
-
-
-class StudentAssignmentExerciseSerializer(serializers.ModelSerializer):
-    dataset = StudentAssignmentExerciseDatasetSerializer()
-    metrics = MetricOwnSerializer(many=True)
-    students_class = ProfessorExercisesClassSerializer()
-
-    class Meta:
-        model = Exercise
-        fields = ["id", "title", "subtitle", "publish_date", "deadline", "limit_of_attempts", "visibility", 
-                  "students_class", "metrics", "description", "evaluation", "dataset"]
-
-
 class StudentAssignmentExerciseAndOwnResultsSerializer(serializers.Serializer):
     exercise = StudentAssignmentExerciseSerializer()
     my_results = StudentAssignmentExerciseOwnResultsSerializer(many=True)
@@ -272,14 +435,6 @@ class StudentAssignmentExerciseAndOwnResultsSerializer(serializers.Serializer):
             'exercise': data['exercise'],
             'my_results': data['my_results'],
         }
-
-
-class StudentAssignmentCodeSubmissionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = CodeSubmission
-        fields = ['id', "file_name_result", "result_submission", "result_submission_date", "file_name_code", 
-                  "code_submission", "code_submission_date"]
-
 
 class StudentAssignmentSerializer(serializers.Serializer):
     assignment = StudentAssignmentExerciseAndOwnResultsSerializer()
@@ -294,27 +449,9 @@ class StudentAssignmentSerializer(serializers.Serializer):
             'submission': data['submission'],
         }
 
-# ------------------------------ Student Assignments Serializers ------------------------------
-
-
-class StudentAssignmentsClassSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Class
-        fields = ['id', "name"]
-
-
-class StudentAssignmentsExerciseSerializer(serializers.ModelSerializer):
-    students_class = StudentAssignmentsClassSerializer()
-
-    class Meta:
-        model = Exercise
-        fields = ["id", "title", "subtitle", "publish_date", "deadline", "limit_of_attempts", 
-                  "visibility", "students_class", "num_answers"]
-
-
 class StudentAssignmentsSerializer(serializers.Serializer):
     exercises = StudentAssignmentsExerciseSerializer(many=True)
-    classes = StudentAssignmentsClassSerializer(many=True)
+    classes = SimpleClassSerializer(many=True)
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
@@ -322,11 +459,3 @@ class StudentAssignmentsSerializer(serializers.Serializer):
             'assignments': data['exercises'],
             'classes': data['classes'],
         }
-
-
-# ------------------------------ Student Home Serializers ------------------------------
-class StudentHomeSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Student
-        fields = ["num_exercises", "num_submissions", "next_deadline", "last_ranking"]
