@@ -9,8 +9,11 @@ from MepML.models import Exercise, Dataset, Result
 def get_exercise(request, prof_id, exercise_id):
     exercise = Exercise.objects.get(id=exercise_id)
     ranking = Result.objects.filter(exercise=exercise_id).order_by('-score')
+    class_ = exercise.students_class
+    students = class_.students.all()
     serializer = ProfessorExerciseSerializer(instance={
         'exercise': exercise,
+        'exercise_class_students': students, 
         'results': ranking
     })
     return Response(serializer.data, status=status.HTTP_200_OK)
