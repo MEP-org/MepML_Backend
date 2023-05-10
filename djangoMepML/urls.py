@@ -44,7 +44,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path("professors/<int:prof_id>/metrics/<int:metric_id>", ws_manage_metric.handle),
     path("insertdata/", views.insert_data, name="insert_data"),
-    path("getclass/<int:class_id>", views.get_class, name="get_class"),
     path("updateclass/<int:class_id>", views.update_class, name="update_class"),
-    path("apitest", views.create_default_metric, name="default_metric"),
+    path("apitest", views.apitest, name="apitest"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
