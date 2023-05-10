@@ -36,7 +36,8 @@ def insert_data(request):
 
     # Create Dataset
     dataset = Dataset.objects.create(train_name="train", train_dataset="train_MGArrll.csv", train_size=1, 
-                                     test_name="test", test_dataset="test_oJHxflz.csv", test_size=1)
+                                     test_name="test", test_dataset="test_oJHxflz.csv", test_size=1,
+                                     test_ground_truth_name="test_y", test_ground_truth_file="test_oJHxflz.csv")
 
     # Create Exercise
     exercise = Exercise.objects.create(
@@ -94,8 +95,13 @@ def insert_data(request):
     result2 = Result.objects.create(score=0.6, student=student1, exercise=exercise2, metric=metric)
     result3 = Result.objects.create(score=0.7, student=student1, exercise=exercise3, metric=metric)
     result10 = Result.objects.create(score=0.9, student=student2, exercise=exercise, metric=metric)
-    return Response(status=status.HTTP_200_OK)
+    return Response(status=status.HTTP_201_CREATED)
 
+
+@api_view(["GET"])
+def apitest(request):
+    #usefull for deleting objects
+    return Response(status=status.HTTP_200_OK)
 
 @api_view(["POST"])
 def create_default_metric(request):
@@ -126,16 +132,6 @@ def create_class(request):
         return Response(invalid_data_dict, status=status.HTTP_400_BAD_REQUEST)
     
     return Response(status=status.HTTP_201_CREATED)
-
-@api_view(["GET"])
-def get_class(request, class_id):
-    try:
-        class_ = Class.objects.get(id=class_id)
-    except Class.DoesNotExist:
-        return Response({"error": "Invalid Class"}, status=status.HTTP_404_NOT_FOUND)
-
-    serializer = ClassSerializer(class_)
-    return Response(serializer.data, status=status.HTTP_200_OK)
 
 @api_view(["PUT"])
 def update_class(request, class_id):
