@@ -10,13 +10,6 @@ x = score(y_true, y_pred)
 """
 
 
-def run(source, y_true, y_pred):
-    my_vars = {"y_true": y_true, "y_pred": y_pred, "sklearn": sklearn}
-    code = compile(source, '<string>', 'exec')
-    exec(code, my_vars)
-    print(my_vars["x"])
-
-
 def run_with_sandbox(source, y_true, y_pred):
     my_builtins = dict(safe_builtins)
     my_vars = {"y_true": y_true, "y_pred": y_pred, "__builtins__": my_builtins, "sklearn": sklearn}
@@ -24,6 +17,13 @@ def run_with_sandbox(source, y_true, y_pred):
     exec(code, my_vars)
     print(my_vars["x"])
 
+run_with_sandbox(src, [1, 0, 1], [1, 1, 1])
+
+
+def run(source, y_true, y_pred):
+    my_vars = {"y_true": y_true, "y_pred": y_pred, "sklearn": sklearn}
+    code = compile(source, '<string>', 'exec')
+    exec(code, my_vars)
+    print(my_vars["x"])
 
 run(src, [1, 0, 1], [1, 1, 1])
-run_with_sandbox(src, [1, 0, 1], [1, 1, 1])

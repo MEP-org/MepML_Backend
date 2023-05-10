@@ -8,17 +8,17 @@ https://mep-org.github.io/Prototype/#/professor/publicExercises
 
 ## For professors:
 https://mep-org.github.io/Prototype/#/professor/classes:
-  - [DONE] GET         /professors/888/classes -----> List<ClassPreview>
-  - [DONE] POST        /professors/888/classes        {Class}
+  - [DONE] GET              /professors/888/classes -----> List<ClassPreview>
+  - [DONE] POST             /professors/888/classes        {Class}
 
 https://mep-org.github.io/Prototype/#/professor/classes/1
-  - [DONE] GET          /professors/888/classes/3 -----> Class with List<Student_name_id>
-  - [DONE] PUT/DELETE   /professors/888/classes/3        {Class}
+  - [DONE] GET              /professors/888/classes/3 -----> Class with List<Student_name_id>
+  - [DONE] PUT/DELETE       /professors/888/classes/3        {Class}
 
 https://mep-org.github.io/Prototype/#/professor/exercises
 + https://mep-org.github.io/Prototype/#/professor/exercises/add
-  - [DONE] GET         /professors/888/exercises -----> List<ExercisePreview> + List<Class_name_id>
-  - [DONE] POST        /professors/888/exercises        {Exercise}
+  - [DONE] GET              /professors/888/exercises -----> List<ExercisePreview> + List<Class_name_id>
+  - [DONE] POST             /professors/888/exercises        {Exercise}
 
 https://mep-org.github.io/Prototype/#/professor/exercises/1
   - [DONE] GET              /professors/888/exercises/3 -----> Exercise + List<Class_name_id> + List<Metric_name_id> + List<Result>
@@ -43,11 +43,11 @@ https://mep-org.github.io/Prototype/#/professor/classes/1
   - [DONE] GET              /students/102534/classes/3 -----> Class
 
 https://mep-org.github.io/Prototype/#/student/assignments
-  - [DONE] GET	     /students/102534/assignments -----> List<ExercisePreview>
+  - [DONE] GET	            /students/102534/assignments -----> List<ExercisePreview>
 
 https://mep-org.github.io/Prototype/#/student/assignments/1
   - [DONE] GET              /students/102534/assignments/3 -----> Exercise + [includes ranking]
-  - POST             /students/102534/assignments/3    {solution.py, results.csv}
+  - POST                    /students/102534/assignments/3    {solution.py, results.csv}
 
 
 Files for /media:
