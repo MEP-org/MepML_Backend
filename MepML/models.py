@@ -5,6 +5,7 @@ from django.db import models
 
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 
+
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, nmec, name, password=None):
         if not email:
@@ -40,6 +41,7 @@ class CustomUserManager(BaseUserManager):
 
     def get_by_natural_key(self, email):
         return self.get(email=email)
+
 
 class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=50, unique=True)
