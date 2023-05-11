@@ -17,17 +17,26 @@ class Command(BaseCommand):
         {
             "title": "Precision",
             "description": "True positives / (True positives + False positives)",
-            "src": base_src + "\treturn sklearn.metrics.precision_score(y_true, y_pred)\n"
+            "src": base_src + "\tif len(set(y_true.flatten())) > 2:\n" +
+            "\t\treturn sklearn.metrics.precision_score(y_true, y_pred, average=\"weighted\", zero_division=0)\n" +
+            "\telse:\n" +
+            "\t\treturn sklearn.metrics.precision_score(y_true, y_pred)\n"
         },
         {
             "title": "Recall",
             "description": "True positives / (True positives + False negatives)",
-            "src": base_src + "\treturn sklearn.metrics.recall_score(y_true, y_pred)\n"
+            "src": base_src + "\tif len(set(y_true.flatten())) > 2:\n" +
+            "\t\treturn sklearn.metrics.recall_score(y_true, y_pred, average=\"weighted\", zero_division=0)\n" +
+            "\telse:\n" +
+            "\t\treturn sklearn.metrics.recall_score(y_true, y_pred)\n"
         },
         {
             "title": "F1",
             "description": "2 * (Precision * Recall) / (Precision + Recall)",
-            "src": base_src + "\treturn sklearn.metrics.f1_score(y_true, y_pred)\n"
+            "src": base_src + "\tif len(set(y_true.flatten())) > 2:\n" +
+            "\t\treturn sklearn.metrics.f1_score(y_true, y_pred, average=\"weighted\", zero_division=0)\n" +
+            "\telse:\n" +
+            "\t\treturn sklearn.metrics.f1_score(y_true, y_pred)\n"
         }
     ]
 
@@ -38,14 +47,12 @@ class Command(BaseCommand):
         for metric in self.metrics:
             filename = f"metrics/{metric['title'].lower()}.py"
             content = ContentFile(metric["src"])
-            if not default_storage.exists(filename):
-                default_storage.save(filename, content)
-                self.stdout.write(self.style.SUCCESS(f"Metric {metric['title']} created"))
-            else:
-                self.stdout.write(f"Metric {metric['title']} already exists")
+            if default_storage.exists(filename):
+                default_storage.delete(filename)
+            default_storage.save(filename, content)
+            self.stdout.write(self.style.SUCCESS(f"Metric {metric['title']} created"))
             Metric.objects.create(
                 title=metric["title"],
                 description=metric["description"],
                 metric_file=filename
             )
-

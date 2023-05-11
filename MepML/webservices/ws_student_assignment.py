@@ -35,36 +35,38 @@ def post_solution(request, student_id, assignment_id):
     submission_data = request.data
     submission_data["student"] = student_id
     submission_data["exercise"] = assignment_id
-    serializer = StudentAssignmentCodeSubmissionPostSerializer(data=submission_data)
+    submission_serializer = StudentAssignmentCodeSubmissionPostSerializer(data=submission_data)
 
-    if serializer.is_valid():
-        submission = serializer.save()
-        metrics = submission.exercise.metrics.all()
+    if submission_serializer.is_valid():
+        assignment = Exercise.objects.get(id=assignment_id)
+        metrics = assignment.metrics.all()
+        test_dataset_filename = assignment.dataset.test_ground_truth_file.name
+        print(test_dataset_filename)
+        y_true = pd.read_csv(default_storage.open(test_dataset_filename), header=None)
         y_pred = pd.read_csv(request.FILES['result_submission'])
-        test_dataset_filename = submission.exercise.dataset.test_ground_truth_file.name
-        y_true = pd.read_csv(default_storage.open(test_dataset_filename))
 
-        results = []
+        results_data = []
 
         for metric in metrics:
             src = default_storage.open(metric.metric_file.name).read().decode("utf-8")
             metric_name = src[src.find("def") + 4:src.find("(")]
             src += f"\nx = {metric_name}(y_true, y_pred)"
-            score = Sandbox.run(src, [1, 0, 1], [1, 1, 1])
-            results.append({
+            score = Sandbox.run(src, y_true, y_pred)
+            results_data.append({
                 "student": student_id,
                 "exercise": assignment_id,
                 "metric": metric.id,
                 "score": score
             })
 
-        serializer = StudentResultCodeSubmissionSerializer(data=results, many=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        results = StudentResultCodeSubmissionSerializer(data=results_data, many=True)
+        if results.is_valid():
+            submission_serializer.save()
+            results.save()
+            return Response(results.data, status=status.HTTP_201_CREATED)
         else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(results.errors, status=status.HTTP_400_BAD_REQUEST)
+    return Response(submission_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET', 'POST'])

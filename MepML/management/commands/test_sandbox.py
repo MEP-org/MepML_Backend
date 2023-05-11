@@ -1,8 +1,13 @@
-from MepML.utils.sandbox import Sandbox
+from django.core.management.base import BaseCommand
 from django.core.files.storage import default_storage
+from MepML.utils.sandbox import Sandbox
+import numpy as np
 
-src = default_storage.open("metrics/accuracy.py").read().decode("utf-8")
-print(Sandbox.run(src, [1, 0, 1], [1, 1, 1]))
+
+class Command(BaseCommand):
+    def handle(self, *args, **options):
+        src = default_storage.open("metrics/recall.py").read().decode("utf-8")
+        print(Sandbox.run(src, np.array([[1], [2], [3]]), np.array([[1], [2], [4]])))
 
 
 # def run_with_sandbox(source, y_true, y_pred):

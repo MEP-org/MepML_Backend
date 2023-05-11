@@ -16,7 +16,7 @@ def get_assignments(request, student_id):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-@api_view(['GET', 'POST'])
+@api_view(['GET'])
 # @authentication_classes([TokenAuthentication])
 # @permission_classes([IsAuthenticated | IsGetRequest])
 def handle(request, student_id=None):
