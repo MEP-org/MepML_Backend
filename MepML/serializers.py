@@ -8,6 +8,13 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ('email', 'nmec', 'name')
 
+# ------------------------------ Authentication Serializers ------------------------------ Not Tested
+class LoginUserSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+
+    class Meta:
+        model = None
+        fields = '__all__'
 
 # ------------------------------ Student Serializers ------------------------------ Tested
 class StudentSerializer(serializers.ModelSerializer):
