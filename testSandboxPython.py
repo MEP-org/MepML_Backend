@@ -1,14 +1,7 @@
 from MepML.utils.sandbox import Sandbox
+from django.core.files.storage import default_storage
 
-src = """
-file = open("sensitive_file.txt", "w")
-import os
-def score(y_true, y_pred):
-    return sklearn.metrics.accuracy_score(y_true, y_pred)
-
-x = score(y_true, y_pred)
-"""
-
+src = default_storage.open("metrics/accuracy.py").read().decode("utf-8")
 print(Sandbox.run(src, [1, 0, 1], [1, 1, 1]))
 
 

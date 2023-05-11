@@ -47,8 +47,7 @@ def post_solution(request, student_id, assignment_id):
         results = []
 
         for metric in metrics:
-            metric_filename = f"metrics/{metric.metric_file.name}.py"
-            src = default_storage.open(metric_filename).read().decode("utf-8")
+            src = default_storage.open(metric.metric_file.name).read().decode("utf-8")
             metric_name = src[src.find("def") + 4:src.find("(")]
             src += f"\nx = {metric_name}(y_true, y_pred)"
             score = Sandbox.run(src, [1, 0, 1], [1, 1, 1])
