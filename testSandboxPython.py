@@ -1,31 +1,15 @@
 from MepML.utils.sandbox import Sandbox
 
 src = """
-file = open("test.txt", "r")
-def score(true_labels, pred_labels):
-    true_positives = 0
-    false_positives = 0
-    false_negatives = 0
-    total = len(true_labels)
-    
-    for i in range(total):
-        if true_labels[i] == 1 and pred_labels[i] == 1:
-            true_positives += 1
-
-        elif true_labels[i] == 0 and pred_labels[i] == 1:
-            false_positives += 1
-
-        elif true_labels[i] == 1 and pred_labels[i] == 0:
-            false_negatives += 1
-    
-    precision = true_positives / (true_positives + false_positives)
-    recall = true_positives / (true_positives + false_negatives)
-    f1 = 2 * precision * recall / (precision + recall)
-    
-    return true_positives
+file = open("sensitive_file.txt", "w")
+import os
+def score(y_true, y_pred):
+    return sklearn.metrics.accuracy_score(y_true, y_pred)
 
 x = score(y_true, y_pred)
 """
+
+print(Sandbox.run(src, [1, 0, 1], [1, 1, 1]))
 
 
 # def run_with_sandbox(source, y_true, y_pred):
@@ -41,17 +25,3 @@ x = score(y_true, y_pred)
 #     my_vars = {"y_true": y_true, "y_pred": y_pred, "__builtins__": my_builtins, "sklearn": sklearn}
 #     code = compile_restricted(source, '<string>', 'exec')
 #     exec(code, my_vars)
-
-
-# run_with_sandbox(src, [1, 0, 1], [1, 1, 1])
-
-print(Sandbox.run(src, [1, 0, 1], [1, 1, 1]))
-
-src = """
-    sdjakjakasd
-"""
-
-try:
-    Sandbox.run(src, [1, 0, 1], [1, 1, 1])
-except Exception:
-    pass
