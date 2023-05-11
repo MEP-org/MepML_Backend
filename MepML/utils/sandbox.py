@@ -2,6 +2,7 @@ import ast
 import numpy as np
 import sklearn.metrics
 
+
 class ImportRemover(ast.NodeTransformer):
     def visit_Import(self, node):
         return None
@@ -24,6 +25,9 @@ class OpenRemover(ast.NodeTransformer):
 
 class Sandbox:
     def run(source, y_true, y_pred):
+        source += "\nx = score(y_true, y_pred)"
+        y_true = np.array(y_true)
+        y_pred = np.array(y_pred)
         tree = ast.parse(source)
         tree = ImportRemover().visit(tree)
         tree = OpenRemover().visit(tree)

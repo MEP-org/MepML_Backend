@@ -46,3 +46,12 @@ x = score(y_true, y_pred)
 # run_with_sandbox(src, [1, 0, 1], [1, 1, 1])
 
 print(Sandbox.run(src, [1, 0, 1], [1, 1, 1]))
+
+src = """
+    sdjakjakasd
+"""
+
+try:
+    Sandbox.run(src, [1, 0, 1], [1, 1, 1])
+except Exception:
+    pass
