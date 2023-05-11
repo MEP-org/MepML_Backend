@@ -350,7 +350,13 @@ class StudentAssignmentCodeSubmissionSerializer(serializers.ModelSerializer):
 class StudentAssignmentCodeSubmissionPostSerializer(serializers.ModelSerializer):
     class Meta:
         model = CodeSubmission
-        fields = ['file_name_result', 'result_submission', 'code_submission', 'file_name_code']
+        fields = '__all__'
+
+
+class StudentResultCodeSubmissionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Result
+        fields = '__all__'
 
 
 # ------------------------------ Other Serializers ------------------------------ Tested

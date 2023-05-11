@@ -1,14 +1,12 @@
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from MepML.serializers import StudentAssignmentSerializer, StudentAssignmentCodeSubmissionPostSerializer
+from MepML.serializers import StudentAssignmentSerializer, StudentAssignmentCodeSubmissionPostSerializer, \
+    StudentResultCodeSubmissionSerializer
 from MepML.models import Exercise, Result, Student, CodeSubmission
 from django.core.files.storage import default_storage
 import pandas as pd
-import sklearn
-import numpy as np
-from RestrictedPython import compile_restricted
-from RestrictedPython.Guards import safe_builtins
+from MepML.utils.sandbox import Sandbox
 # from app.security import *
 
 
@@ -38,29 +36,35 @@ def post_solution(request, student_id, assignment_id):
     submission_data["student"] = student_id
     submission_data["exercise"] = assignment_id
     serializer = StudentAssignmentCodeSubmissionPostSerializer(data=submission_data)
+
     if serializer.is_valid():
         submission = serializer.save()
         metrics = submission.exercise.metrics.all()
         y_pred = pd.read_csv(request.FILES['result_submission'])
-        test_dataset_filename = f"datasets/test/{submission.exercise.dataset.test_dataset}"
+        test_dataset_filename = submission.exercise.dataset.test_ground_truth_file.name
         y_true = pd.read_csv(default_storage.open(test_dataset_filename))
-        y_true = y_true.iloc[:, -1]
+
+        results = []
+
         for metric in metrics:
-            metric_filename = f"metrics/{metric.metric_file}"
-            src = default_storage.open(metric_filename)
+            metric_filename = f"metrics/{metric.metric_file.name}.py"
+            src = default_storage.open(metric_filename).read().decode("utf-8")
             metric_name = src[src.find("def") + 4:src.find("(")]
-            src += f"\n x = {metric_name}(y_true, y_pred)"
-            my_builtins = dict(safe_builtins)
-            my_vars = {"y_true": y_true, "y_pred": y_pred, "__builtins__": my_builtins, "sklearn": sklearn}
-            code = compile_restricted(src, '<string>', 'exec')
-            exec(code, my_vars)
-            Result.objects.create(
-                student=Student.objects.get(id=student_id),
-                exercise=Exercise.objects.get(id=assignment_id),
-                metric=metric,
-                value=my_vars['x']
-            )
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+            src += f"\nx = {metric_name}(y_true, y_pred)"
+            score = Sandbox.run(src, [1, 0, 1], [1, 1, 1])
+            results.append({
+                "student": student_id,
+                "exercise": assignment_id,
+                "metric": metric.id,
+                "score": score
+            })
+
+        serializer = StudentResultCodeSubmissionSerializer(data=results, many=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
