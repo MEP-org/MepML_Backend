@@ -7,7 +7,6 @@ from MepML.models import Student
 
 
 def home(request, student_id):
-    print("Here")
     student = Student.objects.get(id=student_id)
     print(student)
     serializer = StudentHomeSerializer(student)
@@ -15,8 +14,6 @@ def home(request, student_id):
 
 
 @api_view(['GET'])
-# @authentication_classes([TokenAuthentication])
-# @permission_classes([IsAuthenticated | IsGetRequest])
 def handle(request, student_id):
     try:        
         return home(request, student_id)
