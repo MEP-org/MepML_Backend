@@ -143,6 +143,9 @@ class Dataset(models.Model):
     test_upload_date = models.DateTimeField(auto_now_add=True)
     test_size = models.IntegerField() #size in bytes
 
+    test_ground_truth_name = models.CharField(max_length=30)
+    test_ground_truth_file = models.FileField(upload_to='datasets/test_y/')
+
 
 class Metric(models.Model):
     id = models.AutoField(primary_key=True)
