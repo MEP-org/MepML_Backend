@@ -18,13 +18,16 @@ def get_assignment(request, student_id, assignment_id):
     # submission = CodeSubmission.objects.filter(student__id=student_id).filter(exercise__id=assignment_id)
     submission = CodeSubmission.objects.get(id=1)
 
-    print(assignment, my_results, all_results, submission)
+    #Get all students from the class
+    class_ = assignment.students_class
+    assignment_class_students = class_.students.all()
 
     serializer = StudentAssignmentSerializer(instance={
         'assignment': {
             'exercise': assignment,
             'my_results': my_results,
         },
+        'assignment_class_students': assignment_class_students,
         'all_results': all_results,
         'submission': submission,
     })
