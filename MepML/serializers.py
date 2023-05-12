@@ -457,14 +457,43 @@ class StudentAssignmentExerciseAndOwnResultsSerializer(serializers.Serializer):
 
 class StudentAssignmentSerializer(serializers.Serializer):
     assignment = StudentAssignmentExerciseAndOwnResultsSerializer()
+    assignment_class_students = StudentSerializer(many=True)
     all_results = ProfessorExerciseResultSerializer(many=True)
     submission = StudentAssignmentCodeSubmissionSerializer()
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
+
+        results = []
+
+        metrics_id = [i['id'] for i in data['assignment']['exercise']['metrics']]
+
+        #Obtain all students in the exercise class
+        for student in data['assignment_class_students']:
+            # Get all results from the student in the exercise
+            student_results = [i for i in data['all_results'] if i['student'] == student and i['metric']['id'] in metrics_id] # results of the student in the exercise
+
+            # Order based on the metric order in the exercise
+            student_results = sorted(student_results, key=lambda k: metrics_id.index(k['metric']['id']))
+
+            results.append({
+                'student': student,
+                'results': [
+                    {
+                    'date': i['date'],
+                    'score': i['score'],
+                    }
+                    for i in student_results
+                ]
+            })
+
+        for i in data["assignment"]['exercise']["metrics"]:
+            i.pop("metric_file", None)
+
+
         return {
             'assignment': data['assignment'],
-            'all_results': data['all_results'],
+            'all_results': results,
             'submission': data['submission'],
         }
 

@@ -960,9 +960,11 @@ class TestOtherSerializers(APITestCase):
                 'exercise': self.exercise,
                 'my_results': [self.result1],
             },
+            'assignment_class_students': [self.student1, self.student2],
             'all_results': [self.result1],
             'submission': self.code_submission1,
         })
+
         
         # Create expected data
         expected_data = {
@@ -999,11 +1001,19 @@ class TestOtherSerializers(APITestCase):
             },
             'all_results': [
                 {
-                    'id': self.result1.id,
                     'student': {'id': self.student1.id, 'user': {'email': 'jm@ua.pt', 'nmec': 102932, 'name': 'João Mário'}},
-                    'score': 0.5,
-                    'date': self.result1.date.strftime("%d/%m/%Y %H:%M:%S"),
-                    'metric': {'id': self.metric1.id, 'title': 'Metric 1', 'description': 'Metric Description 1', 'metric_file': '/media/metrica1', 'created_by': {'id': self.professor.id, 'user': {'email': 'pd@ua.pt', 'nmec': 102931, 'name': 'Pedro Dias'}}},
+                    'results': [
+                                    {
+                                        'date': self.result1.date.strftime("%d/%m/%Y %H:%M:%S"),
+                                        'score': 0.5
+                                    },
+                                ],
+                },
+                {
+                    'student': {'id': self.student2.id, 'user': {'email': 'rs@ua.pt', 'nmec': 102933, 'name': 'Rafa Silva'}},
+                    'results': [
+
+                                ],
                 },
             ],
             'submission': {
