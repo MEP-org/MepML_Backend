@@ -43,7 +43,7 @@ def post_solution(request, student_id, assignment_id):
         test_dataset_filename = assignment.dataset.test_ground_truth_file.name
         print(test_dataset_filename)
         y_true = pd.read_csv(default_storage.open(test_dataset_filename), header=None)
-        y_pred = pd.read_csv(request.FILES['result_submission'])
+        y_pred = pd.read_csv(request.FILES['result_submission'], header=None)
 
         results_data = []
 
