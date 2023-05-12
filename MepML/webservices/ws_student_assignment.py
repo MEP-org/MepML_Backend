@@ -11,12 +11,10 @@ from MepML.utils.sandbox import Sandbox
 
 
 def get_assignment(request, student_id, assignment_id):
-
     assignment = Exercise.objects.get(id=assignment_id)
-    my_results = Result.objects.filter(student__id=student_id).filter(exercise__id=assignment_id)
+    my_results = Result.objects.filter(student__id=student_id, exercise__id=assignment_id)
     all_results = Result.objects.filter(exercise__id=assignment_id)
-    # submission = CodeSubmission.objects.filter(student__id=student_id).filter(exercise__id=assignment_id)
-    submission = CodeSubmission.objects.get(id=1)
+    submission = CodeSubmission.objects.filter(student__id=student_id, exercise__id=assignment_id).last()
 
     #Get all students from the class
     class_ = assignment.students_class
@@ -38,36 +36,54 @@ def post_solution(request, student_id, assignment_id):
     submission_data = request.data
     submission_data["student"] = student_id
     submission_data["exercise"] = assignment_id
-    submission_serializer = StudentAssignmentCodeSubmissionPostSerializer(data=submission_data)
+    submission = CodeSubmission.objects.filter(student__id=student_id, exercise__id=assignment_id).first()
+
+    if not submission:
+        submission_serializer = StudentAssignmentCodeSubmissionPostSerializer(data=submission_data)
+    else:
+        submission_serializer = StudentAssignmentCodeSubmissionPostSerializer(submission, data=submission_data)
 
     if submission_serializer.is_valid():
         assignment = Exercise.objects.get(id=assignment_id)
         metrics = assignment.metrics.all()
         test_dataset_filename = assignment.dataset.test_ground_truth_file.name
-        print(test_dataset_filename)
         y_true = pd.read_csv(default_storage.open(test_dataset_filename), header=None)
         y_pred = pd.read_csv(request.FILES['result_submission'], header=None)
 
         results_data = []
+        scores = {}
 
         for metric in metrics:
             src = default_storage.open(metric.metric_file.name).read().decode("utf-8")
             src += f"\nx = score(y_true, y_pred)"
             score = Sandbox.run(src, y_true, y_pred)
-            results_data.append({
+            result = Result.objects\
+                .filter(student__id=student_id, exercise__id=assignment_id, metric__id=metric.id)\
+                .first()
+            result_data = {
                 "student": student_id,
                 "exercise": assignment_id,
                 "metric": metric.id,
                 "score": score
-            })
+            }
+            scores[metric.title] = score
+
+            if result:
+                result_serializer = StudentResultCodeSubmissionSerializer(result, data=result_data)
+                if not result_serializer.is_valid():
+                    return Response(result_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                result_serializer.save()
+                continue
+
+            results_data.append(result_data)
 
         results = StudentResultCodeSubmissionSerializer(data=results_data, many=True)
-        if results.is_valid():
-            submission_serializer.save()
-            results.save()
-            return Response(results.data, status=status.HTTP_201_CREATED)
-        else:
+        if not results.is_valid():
             return Response(results.errors, status=status.HTTP_400_BAD_REQUEST)
+        submission_serializer.save()
+        results.save()
+        return Response(scores, status=status.HTTP_201_CREATED)
+
     return Response(submission_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
