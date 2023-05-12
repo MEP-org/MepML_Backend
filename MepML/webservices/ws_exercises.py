@@ -2,9 +2,12 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from MepML.serializers import ProfessorExercisesSerializer, ExercisePostSerializer
-from MepML.models import Exercise, Class, Exercise, Dataset
+from MepML.models import Exercise, Class, Exercise, Dataset, Professor
 from django.core.files import File
 # from app.security import *
+
+#Make post request to slack
+import requests
 
 
 def get_exercises(request, prof_id):
@@ -48,6 +51,24 @@ def post_exercise(request):
     serializer = ExercisePostSerializer(data=data_)
     if serializer.is_valid():
         serializer.save()
+
+        # Get exercise
+        exercise = Exercise.objects.get(id=serializer.data['id'])
+
+        # Get class name
+        class_ = Class.objects.get(id=serializer.data['students_class'])
+
+        # Get professor name
+        professor = Professor.objects.get(id=serializer.data['created_by'])
+
+        # Send message on slack
+        slack_message = {
+            'channel': 'bot-test',
+            'message': f"*New Assignment to:* {class_.name}\n*Title:* {request.data['title']}\n{request.data['subtitle']}\n\n*ByProf:* {professor.user.name} *, due to* {exercise.deadline.strftime('%d/%m/%Y')}",
+        }
+
+        response = requests.post("http://127.0.0.1:8000/notify", json=slack_message , headers={'Content-Type': 'application/json'})
+
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
