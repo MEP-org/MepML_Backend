@@ -450,6 +450,10 @@ class StudentAssignmentExerciseAndOwnResultsSerializer(serializers.Serializer):
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
+
+        # Order based on the metric order in the exercise
+        data['my_results'] = sorted(data['my_results'], key=lambda k: data['exercise']['metrics'].index(k['metric']))
+        
         return {
             'exercise': data['exercise'],
             'my_results': data['my_results'],
