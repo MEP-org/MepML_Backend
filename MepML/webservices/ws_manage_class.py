@@ -13,28 +13,14 @@ def get_class(request, class_id):
 
 
 def put_class(request, prof_id, class_id):
-    print(request.data)
-    request_copy = request.data.copy()
-    request_copy['created_by'] = prof_id
-
-    print(request_copy.get('students'))
-
-    students = [int(i) for i in request_copy.get('students').split(',') if i.isdigit()]
-    request_copy.pop('students', None)
+    data_ = request.data.copy()
+    data_['created_by'] = prof_id
     
     cls = Class.objects.get(id=class_id)
 
-    serializer = ProfessorClassPostSerializer(cls, data=request_copy)
+    serializer = ProfessorClassPostSerializer(cls, data=data_)
     if serializer.is_valid():
         serializer.save()
-
-        # Get class object
-        class_ = Class.objects.get(id=serializer.data["id"])
-
-        # Add students to class and save
-        students = Student.objects.filter(id__in=students)
-        class_.students.set(students)
-        class_.save()
 
         return Response(serializer.data, status=status.HTTP_200_OK)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

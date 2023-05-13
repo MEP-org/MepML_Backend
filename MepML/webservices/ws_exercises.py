@@ -68,7 +68,10 @@ def post_exercise(request, prof_id):
             'message': f"*New Assignment to:* {class_.name}\n*Title:* {request.data['title']}\n{request.data['subtitle']}\n\n*ByProf:* {professor.user.name} *, due to* {exercise.deadline.strftime('%d/%m/%Y')}",
         }
 
-        response = requests.post("http://127.0.0.1:8000/notify", json=slack_message , headers={'Content-Type': 'application/json'})
+        try:
+            requests.post("http://127.0.0.1:8000/notify", json=slack_message , headers={'Content-Type': 'application/json'})
+        except Exception as e:
+            print(f"Error sending message to slack: {e}")
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
