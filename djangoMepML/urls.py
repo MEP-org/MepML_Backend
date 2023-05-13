@@ -33,7 +33,7 @@ urlpatterns = [
     path("professors/<int:prof_id>/exercises", ws_exercises.handle),
     path("professors/<int:prof_id>/exercises/<int:exercise_id>", ws_manage_exercise.handle),
     path("professors/<int:prof_id>/metricsclasses", ws_metrics_classes.handle),
-    path("publicexercises/", ws_public_exercises.handle),
+    path("publicexercises", ws_public_exercises.handle),
     path("publicexercises/<int:exercise_id>", ws_public_exercise.handle),
     path("students/<int:student_id>/assignments", ws_assignments.handle),
     path("students/<int:student_id>/assignments/<int:assignment_id>", ws_student_assignment.handle),
