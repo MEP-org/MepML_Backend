@@ -20,7 +20,7 @@ def get_exercises(request, prof_id):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-def post_exercise(request):
+def post_exercise(request, prof_id):
     x_column_file = open(request.FILES['test_dataset'].name, "w+")
     y_column_file = open(request.FILES['test_dataset'].name[:-4] + "_y.csv", "w+")
     reading_header = True
@@ -48,6 +48,7 @@ def post_exercise(request):
     y_column_file.close()
     data_ = request.data
     data_['dataset'] = dataset.id
+    data_['created_by'] = prof_id
     serializer = ExercisePostSerializer(data=data_)
     if serializer.is_valid():
         serializer.save()
@@ -81,6 +82,6 @@ def handle(request, prof_id=None):
     if request.method == 'GET':
         return get_exercises(request, prof_id)
     elif request.method == 'POST':
-        return post_exercise(request)
+        return post_exercise(request, prof_id)
     #except Exception as e:
     #    return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
