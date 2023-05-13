@@ -728,6 +728,7 @@ class TestCodeSubmissionSerializers(APITestCase):
             'code_submission': '/media/code.py',
             'code_submission_size': 0,
             'code_submission_date': self.code_submission1.code_submission_date.strftime("%d/%m/%Y %H:%M:%S"),
+            'quantity_of_submissions': 1,
         }
 
         # Assert
@@ -1026,6 +1027,7 @@ class TestOtherSerializers(APITestCase):
                 'code_submission': '/media/code.py',
                 'code_submission_size': 0,
                 'code_submission_date': self.code_submission1.code_submission_date.strftime("%d/%m/%Y %H:%M:%S"),
+                'quantity_of_submissions': 1,
             },
         }
 

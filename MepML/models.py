@@ -198,6 +198,7 @@ class CodeSubmission(models.Model):
     code_submission = models.FileField(upload_to='code_submissions/')
     file_name_code = models.CharField(max_length=30)
     code_submission_date = models.DateTimeField(auto_now_add=True)
+    quantity_of_submissions = models.IntegerField(default=1)
 
     # relationships
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
