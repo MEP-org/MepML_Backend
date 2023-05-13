@@ -192,11 +192,11 @@ class Result(models.Model):
 
 class CodeSubmission(models.Model):
     id = models.AutoField(primary_key=True)
-    file_name_result = models.CharField(max_length=30)
+    file_name_result = models.CharField(max_length=70)
     result_submission = models.FileField(upload_to='results/')
     result_submission_date = models.DateTimeField(auto_now_add=True)
     code_submission = models.FileField(upload_to='code_submissions/')
-    file_name_code = models.CharField(max_length=30)
+    file_name_code = models.CharField(max_length=70)
     code_submission_date = models.DateTimeField(auto_now_add=True)
     quantity_of_submissions = models.IntegerField(default=1)
 
