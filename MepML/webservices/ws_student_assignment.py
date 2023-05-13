@@ -37,12 +37,11 @@ def post_solution(request, student_id, assignment_id):
     submission_data["student"] = student_id
     submission_data["exercise"] = assignment_id
     submission = CodeSubmission.objects.filter(student__id=student_id, exercise__id=assignment_id).first()
-
     if not submission:
         submission_serializer = StudentAssignmentCodeSubmissionPostSerializer(data=submission_data)
     else:
+        submission_data["quantity_of_submissions"] = submission.quantity_of_submissions + 1
         submission_serializer = StudentAssignmentCodeSubmissionPostSerializer(submission, data=submission_data)
-        submission_serializer.data["quantity_of_submissions"] += 1
 
     if submission_serializer.is_valid():
         assignment = Exercise.objects.get(id=assignment_id)
