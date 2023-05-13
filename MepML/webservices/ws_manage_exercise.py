@@ -2,12 +2,11 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from MepML.serializers import ProfessorExerciseSerializer, ExercisePostSerializer
-from MepML.models import Exercise, Dataset, Result
+from MepML.models import Exercise, Dataset, Result, Class, Professor
 from django.core.files import File
 # from app.security import *
-
-#Make post request to slack
 import requests
+
 
 def get_exercise(request, prof_id, exercise_id):
     exercise = Exercise.objects.get(id=exercise_id)
@@ -50,7 +49,8 @@ def put_exercise(request, exercise_id):
     y_column_file.close()
     data_ = request.data
     data_['dataset'] = dataset.id
-    serializer = ExercisePostSerializer(data=data_)
+    existent_exercise = Exercise.objects.get(id=exercise_id)
+    serializer = ExercisePostSerializer(existent_exercise, data=data_)
     if serializer.is_valid():
         serializer.save()
 
