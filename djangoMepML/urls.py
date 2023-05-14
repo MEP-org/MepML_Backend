@@ -22,7 +22,7 @@ from django.urls import path
 from MepML import views
 from MepML.webservices import ws_classes, ws_manage_class, ws_metrics, ws_manage_metric,\
     ws_exercises, ws_manage_exercise, ws_metrics_classes, ws_public_exercise, ws_public_exercises, ws_assignments, \
-    ws_student_class, ws_home, ws_student_classes, ws_student_assignment, ws_signin, ws_singup
+    ws_student_class, ws_home, ws_student_classes, ws_student_assignment, ws_signin, ws_singup, ws_token_session
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -42,6 +42,7 @@ urlpatterns = [
     path("students/<int:student_id>/home", ws_home.handle),
     path("signup", ws_singup.handle),
     path("signin", ws_signin.handle),
+    path("tokentosession", ws_token_session.handle),
     #not to being use by front-end
     path('admin/', admin.site.urls),
     path("professors/<int:prof_id>/metrics/<int:metric_id>", ws_manage_metric.handle),

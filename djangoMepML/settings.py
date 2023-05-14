@@ -147,3 +147,5 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 AUTH_USER_MODEL = 'MepML.User'
 
+#FIREBASE_PATH = os.path.join(BASE_DIR, 'keys.json')
+

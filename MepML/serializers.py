@@ -10,11 +10,35 @@ class UserSerializer(serializers.ModelSerializer):
 
 # ------------------------------ Authentication Serializers ------------------------------ Not Tested
 class LoginUserSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
+    token = serializers.SerializerMethodField()
+    email = serializers.SerializerMethodField()
+    nmec = serializers.SerializerMethodField()
+    name = serializers.SerializerMethodField()
+    user_type = serializers.SerializerMethodField()
+
+    def get_user_type(self, obj):
+        if isinstance(obj, Student):
+            return "student"
+        elif isinstance(obj, Professor):
+            return "professor"
+        else:
+            return str(type(obj))
+
+    def get_token(self, obj):
+        return obj.user.firebase_uuid
+        
+    def get_email(self, obj):
+        return obj.user.email
+    
+    def get_nmec(self, obj):
+        return obj.user.nmec
+    
+    def get_name(self, obj):
+        return obj.user.name
 
     class Meta:
         model = None
-        fields = '__all__'
+        fields = ('id', 'token', 'user_type', 'name', 'email', 'nmec')
 
 # ------------------------------ Student Serializers ------------------------------ Tested
 class StudentSerializer(serializers.ModelSerializer):
