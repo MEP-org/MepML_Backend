@@ -30,6 +30,8 @@ class StudentHomeSerializer(serializers.ModelSerializer):
 
     #format date
     def get_next_deadline(self, obj):
+        if obj.next_deadline == None:
+            return None
         return obj.next_deadline.strftime("%d/%m/%Y %H:%M:%S")
 
     class Meta:
