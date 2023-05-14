@@ -50,6 +50,10 @@ def post_solution(request, student_id, assignment_id):
         y_true = pd.read_csv(default_storage.open(test_dataset_filename), header=None)
         y_pred = pd.read_csv(request.FILES['result_submission'], header=None)
 
+        if y_true.shape != y_pred.shape:
+            return Response({"error": "Invalid submission => y_true and y_pred must have the same shape"},
+                            status=status.HTTP_400_BAD_REQUEST)
+
         results_data = []
         scores = {}
 
