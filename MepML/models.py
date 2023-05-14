@@ -46,7 +46,7 @@ class CustomUserManager(BaseUserManager):
 class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=50, unique=True)
     nmec = models.IntegerField(primary_key=True)
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=100)
 
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
@@ -122,7 +122,7 @@ class Student(models.Model):
 
 class Class(models.Model):
     id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=100)
     image = models.ImageField(upload_to='classes_images/', blank=True)
     # relationships
     created_by = models.ForeignKey(Professor, on_delete=models.CASCADE)
@@ -135,17 +135,17 @@ class Class(models.Model):
 class Dataset(models.Model):
     id = models.AutoField(primary_key=True)
 
-    train_name = models.CharField(max_length=30)
+    train_name = models.CharField(max_length=100)
     train_dataset = models.FileField(upload_to='datasets/train/')
     train_upload_date = models.DateTimeField(auto_now_add=True)
     train_size = models.IntegerField() #size in bytes
     
-    test_name = models.CharField(max_length=30)
+    test_name = models.CharField(max_length=100)
     test_dataset = models.FileField(upload_to='datasets/test/')
     test_upload_date = models.DateTimeField(auto_now_add=True)
     test_size = models.IntegerField() #size in bytes
 
-    test_ground_truth_name = models.CharField(max_length=30)
+    test_ground_truth_name = models.CharField(max_length=100)
     test_ground_truth_file = models.FileField(upload_to='datasets/test_y/')
 
 
@@ -159,10 +159,10 @@ class Metric(models.Model):
 
 class Exercise(models.Model):
     id = models.AutoField(primary_key=True)
-    title = models.CharField(max_length=30)
-    subtitle = models.CharField(max_length=30)
-    description = models.CharField(max_length=100)
-    evaluation = models.CharField(max_length=100)
+    title = models.CharField(max_length=100)
+    subtitle = models.CharField(max_length=100)
+    description = models.TextField()
+    evaluation = models.TextField()
     publish_date = models.DateTimeField(auto_now_add=True)
     deadline = models.DateTimeField()
     limit_of_attempts = models.SmallIntegerField()
