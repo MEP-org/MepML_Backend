@@ -2,8 +2,10 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from MepML.serializers import ProfessorExerciseSerializer, ExercisePostSerializer
-from MepML.models import Exercise, Dataset, Result, Class, Professor
+from MepML.models import Exercise, Dataset, Result, Class, Professor, CodeSubmission, Metric
 from django.core.files import File
+from django.core.files.storage import default_storage
+from MepML.utils.sandbox import Sandbox
 # from app.security import *
 import requests
 
@@ -54,11 +56,35 @@ def put_exercise(request, prof_id, exercise_id):
         data_['dataset'] = dataset.id
     else:
         data_['dataset'] = Exercise.objects.get(id=exercise_id).dataset.id
+        dataset = Dataset.objects.get(id=data_['dataset'])
 
     existent_exercise = Exercise.objects.get(id=exercise_id)
     serializer = ExercisePostSerializer(existent_exercise, data=data_)
+
     if serializer.is_valid():
         serializer.save()
+        new_metrics = Metric.objects.filter(id__in=data_.getlist('metrics'))
+        old_metrics = existent_exercise.metrics.all()
+        y_true = dataset.test_ground_truth_file.read().decode("utf-8")
+
+        for metric in new_metrics:
+            if metric not in old_metrics:
+                src = default_storage.open(metric.metric_file.name).read().decode("utf-8")
+                src += f"\nx = score(y_true, y_pred)"
+                code_submissions = CodeSubmission.objects.filter(exercise=existent_exercise)
+                for code_submission in code_submissions:
+                    y_pred = code_submission.result_submission.read().decode("utf-8")
+                    score = Sandbox.run(src, y_true, y_pred)
+                    Result.objects.create(
+                        exercise=existent_exercise,
+                        student=code_submission.student,
+                        score=score,
+                        metric=metric
+                    )
+
+        for metric in old_metrics:
+            if metric not in new_metrics:
+                Result.objects.filter(exercise=existent_exercise, metric=metric).delete()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
