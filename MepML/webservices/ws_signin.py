@@ -7,11 +7,10 @@ from djangoMepML import authentication
 
 def singin(request):
     fire_state, pyromancer_id = authentication.fire_in(
-            request, 
             request.POST["email"], 
             request.POST["password"]
             )
-    #print(fire_state)
+    print(fire_state)
     try:
         user = User.objects.get(firebase_uuid=pyromancer_id)
     except:

@@ -4,11 +4,15 @@ from rest_framework.response import Response
 from MepML.serializers import ProfessorExercisesSerializer, ExercisePostSerializer
 from MepML.models import Exercise, Class, Exercise, Dataset, Professor
 from django.core.files import File
-# from app.security import *
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
 
 #Make post request to slack
 import requests
 
+BOT_HOST = os.environ.get("slack-bot-host")
 
 def get_exercises(request, prof_id):
     exercises = Exercise.objects.filter(created_by=prof_id)
@@ -76,7 +80,7 @@ def post_exercise(request, prof_id):
         }
 
         try:
-            requests.post("http://127.0.0.1:8000/notify", json=slack_message , headers={'Content-Type': 'application/json'})
+            requests.post(BOT_HOST + "notify", json=slack_message , headers={'Content-Type': 'application/json'})
         except Exception as e:
             print(f"Error sending message to slack: {e}")
 

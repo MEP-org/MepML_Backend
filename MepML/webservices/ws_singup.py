@@ -7,11 +7,23 @@ from djangoMepML import authentication
 
 
 def singup(request):
+    try:
+        User.objects.get(nmec=request.POST["nmec"])
+        return Response({"error": "nmec exist"}, status=status.HTTP_400_BAD_REQUEST)
+    except:
+        print("nmec exist")
+
+    try:
+        User.objects.get(email=request.POST["email"])
+        return Response({"error": "email exist"}, status=status.HTTP_400_BAD_REQUEST)
+    except:
+        print("email exists")
+
     fire_state, pyromancer_id = authentication.crate_new_pyromancer(
                                 request.POST["email"], 
                                 request.POST["password"]
-                                )
-    #print(fire_state)
+                     
+    print(fire_state)
     try:
         User.objects.get(firebase_uuid=pyromancer_id)
         return Response(status=status.HTTP_400_BAD_REQUEST)
