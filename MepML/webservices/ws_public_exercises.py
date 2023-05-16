@@ -23,9 +23,9 @@ def get_all_public(request):
         if "size down" == request.GET["order"].lower():
             order = "-dataset__train_size"
 
-        exercises = Exercise.objects.all().order_by(order)
+        exercises = Exercise.objects.all().filter(visibility=True).order_by(order)
     else:
-        exercises = Exercise.objects.all()
+        exercises = Exercise.objects.all().filter(visibility=True)
     professors = Professor.objects.all()
 
     if "title" in request.GET:

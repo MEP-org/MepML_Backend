@@ -3,6 +3,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from MepML.serializers import ProfessorMetricsSerializer, ProfessorMetricPostSerializer
 from MepML.models import Metric
+from MepML.utils.sandbox import Sandbox
 # from app.security import *
 
 
@@ -16,9 +17,17 @@ def get_metrics(request, prof_id):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-def post_metric(request):
-    serializer = ProfessorMetricPostSerializer(data=request.data)
+def post_metric(request, prof_id):
+    data_ = request.data.copy()
+    data_['created_by'] = prof_id
+
+    serializer = ProfessorMetricPostSerializer(data=data_)
     if serializer.is_valid():
+        source = request.FILES["metric_file"].read().decode("utf-8")
+        try:
+            Sandbox.run(source, [1, 0, 1], [1, 1, 1])
+        except Exception as e:
+            return Response({"error": "Invalid metric => " + str(e)}, status=status.HTTP_400_BAD_REQUEST)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -32,6 +41,6 @@ def handle(request, prof_id=None):
         if request.method == 'GET':
             return get_metrics(request, prof_id)
         elif request.method == 'POST':
-            return post_metric(request)
+            return post_metric(request, prof_id)
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)

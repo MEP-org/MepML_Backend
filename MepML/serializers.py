@@ -8,6 +8,37 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ('email', 'nmec', 'name')
 
+# ------------------------------ Authentication Serializers ------------------------------ Not Tested
+class LoginUserSerializer(serializers.ModelSerializer):
+    token = serializers.SerializerMethodField()
+    email = serializers.SerializerMethodField()
+    nmec = serializers.SerializerMethodField()
+    name = serializers.SerializerMethodField()
+    user_type = serializers.SerializerMethodField()
+
+    def get_user_type(self, obj):
+        if isinstance(obj, Student):
+            return "student"
+        elif isinstance(obj, Professor):
+            return "professor"
+        else:
+            return str(type(obj))
+
+    def get_token(self, obj):
+        return obj.user.firebase_uuid
+        
+    def get_email(self, obj):
+        return obj.user.email
+    
+    def get_nmec(self, obj):
+        return obj.user.nmec
+    
+    def get_name(self, obj):
+        return obj.user.name
+
+    class Meta:
+        model = None
+        fields = ('id', 'token', 'user_type', 'name', 'email', 'nmec')
 
 # ------------------------------ Student Serializers ------------------------------ Tested
 class StudentSerializer(serializers.ModelSerializer):
@@ -23,6 +54,8 @@ class StudentHomeSerializer(serializers.ModelSerializer):
 
     #format date
     def get_next_deadline(self, obj):
+        if obj.next_deadline == None:
+            return None
         return obj.next_deadline.strftime("%d/%m/%Y %H:%M:%S")
 
     class Meta:
@@ -147,7 +180,7 @@ class DatasetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Dataset
         fields = ['id', "train_name", "train_dataset", "train_upload_date", "train_size", 
-                  "test_name", "test_dataset", "test_upload_date", "test_size"]
+                  "test_name", "test_dataset", "test_upload_date", "test_size", "test_line_quant"]
 
 
 class PublicExercisesExerciseTrainingDatasetSerializer(serializers.ModelSerializer):
@@ -177,7 +210,7 @@ class StudentAssignmentExerciseDatasetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Dataset
         fields = ["train_name", "train_dataset", "train_size", "train_upload_date",
-                  "test_name", "test_dataset", "test_size", "test_upload_date"]
+                  "test_name", "test_dataset", "test_size", "test_upload_date", "test_line_quant"]
         
 
 # ------------------------------ Exercise Serializers ------------------------------ Tested
@@ -344,8 +377,20 @@ class StudentAssignmentCodeSubmissionSerializer(serializers.ModelSerializer):
     class Meta:
         model = CodeSubmission
         fields = ['id', "file_name_result", "result_submission", "result_submission_size", "result_submission_date", "file_name_code", 
-                  "code_submission", "code_submission_size", "code_submission_date"]
-        
+                  "code_submission", "code_submission_size", "code_submission_date", "quantity_of_submissions"]
+
+
+class StudentAssignmentCodeSubmissionPostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CodeSubmission
+        fields = '__all__'
+
+
+class StudentResultCodeSubmissionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Result
+        fields = '__all__'
+
 
 # ------------------------------ Other Serializers ------------------------------ Tested
 
@@ -431,6 +476,10 @@ class StudentAssignmentExerciseAndOwnResultsSerializer(serializers.Serializer):
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
+
+        # Order based on the metric order in the exercise
+        data['my_results'] = sorted(data['my_results'], key=lambda k: data['exercise']['metrics'].index(k['metric']))
+        
         return {
             'exercise': data['exercise'],
             'my_results': data['my_results'],
@@ -438,14 +487,43 @@ class StudentAssignmentExerciseAndOwnResultsSerializer(serializers.Serializer):
 
 class StudentAssignmentSerializer(serializers.Serializer):
     assignment = StudentAssignmentExerciseAndOwnResultsSerializer()
+    assignment_class_students = StudentSerializer(many=True)
     all_results = ProfessorExerciseResultSerializer(many=True)
     submission = StudentAssignmentCodeSubmissionSerializer()
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
+
+        results = []
+
+        metrics_id = [i['id'] for i in data['assignment']['exercise']['metrics']]
+
+        #Obtain all students in the exercise class
+        for student in data['assignment_class_students']:
+            # Get all results from the student in the exercise
+            student_results = [i for i in data['all_results'] if i['student'] == student and i['metric']['id'] in metrics_id] # results of the student in the exercise
+
+            # Order based on the metric order in the exercise
+            student_results = sorted(student_results, key=lambda k: metrics_id.index(k['metric']['id']))
+
+            results.append({
+                'student': student,
+                'results': [
+                    {
+                    'date': i['date'],
+                    'score': i['score'],
+                    }
+                    for i in student_results
+                ]
+            })
+
+        for i in data["assignment"]['exercise']["metrics"]:
+            i.pop("metric_file", None)
+
+
         return {
             'assignment': data['assignment'],
-            'all_results': data['all_results'],
+            'all_results': results,
             'submission': data['submission'],
         }
 
@@ -457,5 +535,17 @@ class StudentAssignmentsSerializer(serializers.Serializer):
         data = super().to_representation(instance)
         return {
             'assignments': data['exercises'],
+            'classes': data['classes'],
+        }
+    
+
+class ProfessorCreateExerciseGETSerializer(serializers.Serializer):
+    metrics = MetricOwnSerializer(many=True)
+    classes = SimpleClassSerializer(many=True)
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        return {
+            'metrics': data['metrics'],
             'classes': data['classes'],
         }

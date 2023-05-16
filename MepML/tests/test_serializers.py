@@ -8,7 +8,7 @@ from rest_framework import status
 
 from MepML.models import CodeSubmission, Dataset, Exercise, Professor, Result, User, Student, Class, Metric
 from MepML.serializers import DatasetSerializer, ExercisePostSerializer, ExerciseSerializer, MetricOwnSerializer, MetricSerializer, \
-    MetricViewerSerializer, ProfessorClassPostSerializer, ProfessorClassSerializer, ProfessorClassesSerializer, ProfessorExerciseResultSerializer, ProfessorExerciseSerializer, ProfessorExercisesExerciseSerializer, ProfessorExercisesSerializer, ProfessorMetricPostSerializer, ProfessorMetricsSerializer, ProfessorSerializer, PublicExerciseSerializer, PublicExercisesExerciseSerializer, PublicExercisesExerciseTrainingDatasetSerializer, PublicExercisesProfessorsSerializer, PublicExercisesSerializer, SimpleClassSerializer, StudentAssignmentCodeSubmissionSerializer, StudentAssignmentExerciseAndOwnResultsSerializer, StudentAssignmentExerciseDatasetSerializer, StudentAssignmentExerciseOwnResultsSerializer, StudentAssignmentExerciseSerializer, StudentAssignmentSerializer, StudentAssignmentsExerciseSerializer, StudentAssignmentsSerializer, StudentClassSerializer, StudentClassesSerializer, StudentHomeSerializer, UserSerializer, StudentSerializer
+    MetricViewerSerializer, ProfessorClassPostSerializer, ProfessorClassSerializer, ProfessorClassesSerializer, ProfessorCreateExerciseGETSerializer, ProfessorExerciseResultSerializer, ProfessorExerciseSerializer, ProfessorExercisesExerciseSerializer, ProfessorExercisesSerializer, ProfessorMetricPostSerializer, ProfessorMetricsSerializer, ProfessorSerializer, PublicExerciseSerializer, PublicExercisesExerciseSerializer, PublicExercisesExerciseTrainingDatasetSerializer, PublicExercisesProfessorsSerializer, PublicExercisesSerializer, SimpleClassSerializer, StudentAssignmentCodeSubmissionSerializer, StudentAssignmentExerciseAndOwnResultsSerializer, StudentAssignmentExerciseDatasetSerializer, StudentAssignmentExerciseOwnResultsSerializer, StudentAssignmentExerciseSerializer, StudentAssignmentSerializer, StudentAssignmentsExerciseSerializer, StudentAssignmentsSerializer, StudentClassSerializer, StudentClassesSerializer, StudentHomeSerializer, UserSerializer, StudentSerializer
 
 
 from django.utils.timezone import make_aware
@@ -728,6 +728,7 @@ class TestCodeSubmissionSerializers(APITestCase):
             'code_submission': '/media/code.py',
             'code_submission_size': 0,
             'code_submission_date': self.code_submission1.code_submission_date.strftime("%d/%m/%Y %H:%M:%S"),
+            'quantity_of_submissions': 1,
         }
 
         # Assert
@@ -960,9 +961,11 @@ class TestOtherSerializers(APITestCase):
                 'exercise': self.exercise,
                 'my_results': [self.result1],
             },
+            'assignment_class_students': [self.student1, self.student2],
             'all_results': [self.result1],
             'submission': self.code_submission1,
         })
+
         
         # Create expected data
         expected_data = {
@@ -999,11 +1002,19 @@ class TestOtherSerializers(APITestCase):
             },
             'all_results': [
                 {
-                    'id': self.result1.id,
                     'student': {'id': self.student1.id, 'user': {'email': 'jm@ua.pt', 'nmec': 102932, 'name': 'João Mário'}},
-                    'score': 0.5,
-                    'date': self.result1.date.strftime("%d/%m/%Y %H:%M:%S"),
-                    'metric': {'id': self.metric1.id, 'title': 'Metric 1', 'description': 'Metric Description 1', 'metric_file': '/media/metrica1', 'created_by': {'id': self.professor.id, 'user': {'email': 'pd@ua.pt', 'nmec': 102931, 'name': 'Pedro Dias'}}},
+                    'results': [
+                                    {
+                                        'date': self.result1.date.strftime("%d/%m/%Y %H:%M:%S"),
+                                        'score': 0.5
+                                    },
+                                ],
+                },
+                {
+                    'student': {'id': self.student2.id, 'user': {'email': 'rs@ua.pt', 'nmec': 102933, 'name': 'Rafa Silva'}},
+                    'results': [
+
+                                ],
                 },
             ],
             'submission': {
@@ -1016,6 +1027,7 @@ class TestOtherSerializers(APITestCase):
                 'code_submission': '/media/code.py',
                 'code_submission_size': 0,
                 'code_submission_date': self.code_submission1.code_submission_date.strftime("%d/%m/%Y %H:%M:%S"),
+                'quantity_of_submissions': 1,
             },
         }
 
@@ -1054,6 +1066,43 @@ class TestOtherSerializers(APITestCase):
                     'name': 'Class 1',
                 }
             ]
+        }
+
+        # Assert
+        self.assertEqual(serializer.data, expected_data)
+
+    
+    def test_professor_create_exercise_get_serializer(self):
+        # Serialize
+        serializer = ProfessorCreateExerciseGETSerializer(instance={
+            'metrics': [self.metric1, self.metric2],
+            'classes': [self.class_, self.class2],
+        })
+
+        # Create expected data
+        expected_data = {
+            'metrics': [
+                {
+                    'id': self.metric1.id,
+                    'title': 'Metric 1',
+                    'description': 'Metric Description 1',
+                },
+                {
+                    'id': self.metric2.id,
+                    'title': 'Metric 2',
+                    'description': 'Metric Description 2',
+                },
+            ],
+            'classes': [
+                {
+                    'id': self.class_.id,
+                    'name': 'Class 1',
+                },
+                {
+                    'id': self.class2.id,
+                    'name': 'Class 2',
+                },
+            ],
         }
 
         # Assert

@@ -5,6 +5,7 @@ from django.db import models
 
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 
+
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, nmec, name, password=None):
         if not email:
@@ -41,13 +42,16 @@ class CustomUserManager(BaseUserManager):
     def get_by_natural_key(self, email):
         return self.get(email=email)
 
+
 class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=50, unique=True)
     nmec = models.IntegerField(primary_key=True)
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=100)
 
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
+
+    firebase_uuid = models.CharField(max_length=64)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['nmec', 'name']
@@ -118,7 +122,7 @@ class Student(models.Model):
 
 class Class(models.Model):
     id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=100)
     image = models.ImageField(upload_to='classes_images/', blank=True)
     # relationships
     created_by = models.ForeignKey(Professor, on_delete=models.CASCADE)
@@ -131,15 +135,19 @@ class Class(models.Model):
 class Dataset(models.Model):
     id = models.AutoField(primary_key=True)
 
-    train_name = models.CharField(max_length=30)
+    train_name = models.CharField(max_length=100)
     train_dataset = models.FileField(upload_to='datasets/train/')
     train_upload_date = models.DateTimeField(auto_now_add=True)
     train_size = models.IntegerField() #size in bytes
     
-    test_name = models.CharField(max_length=30)
+    test_name = models.CharField(max_length=100)
     test_dataset = models.FileField(upload_to='datasets/test/')
     test_upload_date = models.DateTimeField(auto_now_add=True)
     test_size = models.IntegerField() #size in bytes
+    test_line_quant = models.IntegerField() #number of lines
+
+    test_ground_truth_name = models.CharField(max_length=100)
+    test_ground_truth_file = models.FileField(upload_to='datasets/test_y/')
 
 
 class Metric(models.Model):
@@ -152,13 +160,13 @@ class Metric(models.Model):
 
 class Exercise(models.Model):
     id = models.AutoField(primary_key=True)
-    title = models.CharField(max_length=30)
-    subtitle = models.CharField(max_length=30)
-    description = models.CharField(max_length=100)
-    evaluation = models.CharField(max_length=100)
+    title = models.CharField(max_length=100)
+    subtitle = models.CharField(max_length=100)
+    description = models.TextField()
+    evaluation = models.TextField()
     publish_date = models.DateTimeField(auto_now_add=True)
     deadline = models.DateTimeField()
-    limit_of_attempts = models.SmallIntegerField()
+    limit_of_attempts = models.IntegerField(blank=True, null=True)
     visibility = models.BooleanField()
 
     # relationships
@@ -185,12 +193,13 @@ class Result(models.Model):
 
 class CodeSubmission(models.Model):
     id = models.AutoField(primary_key=True)
-    file_name_result = models.CharField(max_length=30)
+    file_name_result = models.CharField(max_length=70)
     result_submission = models.FileField(upload_to='results/')
     result_submission_date = models.DateTimeField(auto_now_add=True)
     code_submission = models.FileField(upload_to='code_submissions/')
-    file_name_code = models.CharField(max_length=30)
+    file_name_code = models.CharField(max_length=70)
     code_submission_date = models.DateTimeField(auto_now_add=True)
+    quantity_of_submissions = models.IntegerField(default=1)
 
     # relationships
     student = models.ForeignKey(Student, on_delete=models.CASCADE)

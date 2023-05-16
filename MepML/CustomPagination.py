@@ -9,7 +9,9 @@ class CustomPagination(PageNumberPagination):
         return Response({
             'next': self.get_next_link(),
             'previous': self.get_previous_link(),
-            'total': self.page.paginator.count,
-            'this_page': len(self.page.paginator.object_list),
-            'results': data
+            'current_page': self.page.number, # Current page
+            'total_pages': self.page.paginator.num_pages, # Total quantity of pages
+            'total_elements': self.page.paginator.count, # Quantity of exercises in the database
+            'this_page_elements': len(self.page.paginator.object_list), # Quantity of exercises in this page
+            'results': data,
         })

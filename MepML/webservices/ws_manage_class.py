@@ -2,7 +2,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from MepML.serializers import ProfessorClassSerializer, ProfessorClassPostSerializer
-from MepML.models import Class
+from MepML.models import Class, Student
 # from app.security import *
 
 
@@ -12,11 +12,16 @@ def get_class(request, class_id):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-def put_class(request, class_id):
+def put_class(request, prof_id, class_id):
+    data_ = request.data.copy()
+    data_['created_by'] = prof_id
+    
     cls = Class.objects.get(id=class_id)
-    serializer = ProfessorClassPostSerializer(cls, data=request.data)
+
+    serializer = ProfessorClassPostSerializer(cls, data=data_)
     if serializer.is_valid():
         serializer.save()
+
         return Response(serializer.data, status=status.HTTP_200_OK)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -35,7 +40,7 @@ def handle(request, prof_id, class_id):
         if request.method == 'GET':
             return get_class(request, class_id)
         elif request.method == 'PUT':
-            return put_class(request, class_id)
+            return put_class(request, prof_id, class_id)
         elif request.method == 'DELETE':
             return delete_class(request, class_id)
     except Exception as e:
