@@ -144,6 +144,7 @@ class Dataset(models.Model):
     test_dataset = models.FileField(upload_to='datasets/test/')
     test_upload_date = models.DateTimeField(auto_now_add=True)
     test_size = models.IntegerField() #size in bytes
+    test_line_quant = models.IntegerField() #number of lines
 
     test_ground_truth_name = models.CharField(max_length=100)
     test_ground_truth_file = models.FileField(upload_to='datasets/test_y/')
@@ -165,7 +166,7 @@ class Exercise(models.Model):
     evaluation = models.TextField()
     publish_date = models.DateTimeField(auto_now_add=True)
     deadline = models.DateTimeField()
-    limit_of_attempts = models.SmallIntegerField()
+    limit_of_attempts = models.IntegerField(blank=True, null=True)
     visibility = models.BooleanField()
 
     # relationships

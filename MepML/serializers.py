@@ -180,7 +180,7 @@ class DatasetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Dataset
         fields = ['id', "train_name", "train_dataset", "train_upload_date", "train_size", 
-                  "test_name", "test_dataset", "test_upload_date", "test_size"]
+                  "test_name", "test_dataset", "test_upload_date", "test_size", "test_line_quant"]
 
 
 class PublicExercisesExerciseTrainingDatasetSerializer(serializers.ModelSerializer):
@@ -210,7 +210,7 @@ class StudentAssignmentExerciseDatasetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Dataset
         fields = ["train_name", "train_dataset", "train_size", "train_upload_date",
-                  "test_name", "test_dataset", "test_size", "test_upload_date"]
+                  "test_name", "test_dataset", "test_size", "test_upload_date", "test_line_quant"]
         
 
 # ------------------------------ Exercise Serializers ------------------------------ Tested

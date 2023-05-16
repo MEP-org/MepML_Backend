@@ -21,14 +21,20 @@ def get_exercises(request, prof_id):
 
 
 def post_exercise(request, prof_id):
+    #Verify if the quantity of attempts is a valid value
+    if 'quantity_of_attempts' in request.data and request.data['quantity_of_attempts'] <= 0:
+        return Response({'error': 'Quantity of attempts must be greater than 0 or unlimited'}, status=status.HTTP_400_BAD_REQUEST)
+
     x_column_file = open(request.FILES['test_dataset'].name, "w+")
     y_column_file = open(request.FILES['test_dataset'].name[:-4] + "_y.csv", "w+")
     reading_header = True
+    test_line_quant = 0
     for line in request.FILES['test_dataset']:
         line = line.decode("utf-8") 
         if reading_header:
             reading_header = False
             continue
+        test_line_quant += 1
         x_column_file.write("".join(line.strip().split(",")[:-1]) + "\n")
         y_column_file.write(line.strip().split(",")[-1] + "\n")
     django_file_x = File(x_column_file)
@@ -42,7 +48,8 @@ def post_exercise(request, prof_id):
         test_dataset = django_file_x,
         test_size = django_file_x.size,
         test_ground_truth_name = django_file_x.name,
-        test_ground_truth_file = django_file_y
+        test_ground_truth_file = django_file_y,
+        test_line_quant = test_line_quant
     )
     x_column_file.close()
     y_column_file.close()
