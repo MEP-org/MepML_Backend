@@ -22,7 +22,7 @@ def singup(request):
     fire_state, pyromancer_id = authentication.crate_new_pyromancer(
                                 request.POST["email"], 
                                 request.POST["password"]
-                                )
+                     
     print(fire_state)
     try:
         User.objects.get(firebase_uuid=pyromancer_id)
