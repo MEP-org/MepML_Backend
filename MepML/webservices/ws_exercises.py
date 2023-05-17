@@ -60,6 +60,8 @@ def post_exercise(request, prof_id):
     data_ = request.data
     data_['dataset'] = dataset.id
     data_['created_by'] = prof_id
+    # Convert deadline with format dd/mm/yyyy to +1 day
+    data_['deadline'] = data_['deadline'] + " 23:59:59"
     serializer = ExercisePostSerializer(data=data_)
     if serializer.is_valid():
         serializer.save()

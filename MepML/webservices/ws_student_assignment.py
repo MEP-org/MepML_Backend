@@ -41,6 +41,10 @@ def post_solution(request, student_id, assignment_id):
     if not submission:
         submission_serializer = StudentAssignmentCodeSubmissionPostSerializer(data=submission_data)
     else:
+        if "result_submission" in request.FILES:
+            submission_data["result_submission_date"] = timezone.now()
+        if "code_submission" in request.FILES:
+            submission_data["code_submission_date"] = timezone.now()
         submission_data["quantity_of_submissions"] = submission.quantity_of_submissions + 1
         submission_serializer = StudentAssignmentCodeSubmissionPostSerializer(submission, data=submission_data)
 

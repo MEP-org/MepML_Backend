@@ -67,6 +67,9 @@ def put_exercise(request, prof_id, exercise_id):
         dataset = Dataset.objects.get(id=data_['dataset'])
 
     existent_exercise = Exercise.objects.get(id=exercise_id)
+
+    if 'deadline' in data_.keys():
+        data_['deadline'] = data_['deadline'] + " 23:59:59"
     serializer = ExercisePostSerializer(existent_exercise, data=data_)
 
     if serializer.is_valid():

@@ -427,8 +427,6 @@ class ProfessorExerciseSerializer(serializers.Serializer):
     def to_representation(self, instance):
         data = super().to_representation(instance)
 
-        print("Inside ProfessorExerciseSerializer")
-
         results = []
 
         #Obtain all students in the exercise class
@@ -442,9 +440,7 @@ class ProfessorExerciseSerializer(serializers.Serializer):
             # Get the student code
             student_code = None
             for i in data['student_codes']:
-                print("Checking student", student['id'], "code")
                 if i['student'] == student['id']:
-                    print("Found student code")
                     student_code = data['student_codes'].pop(data['student_codes'].index(i))
                     student_code.pop("student", None)
                     break
