@@ -1,4 +1,3 @@
-import datetime
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -8,6 +7,7 @@ from MepML.models import Exercise, Result, Student, CodeSubmission
 from django.core.files.storage import default_storage
 import pandas as pd
 from MepML.utils.sandbox import Sandbox
+from django.utils import timezone
 # from app.security import *
 
 
@@ -42,18 +42,12 @@ def post_solution(request, student_id, assignment_id):
         submission_serializer = StudentAssignmentCodeSubmissionPostSerializer(data=submission_data)
     else:
         submission_data["quantity_of_submissions"] = submission.quantity_of_submissions + 1
-        # Check and update the result_submission_date if result_submission is in the request
-        if "result_submission" in request.FILES:
-            submission_data["result_submission_date"] = datetime.datetime.now(datetime.timezone.utc)
-        if "code_submission" in request.FILES:
-            submission_data["code_submission_date"] = datetime.datetime.now(datetime.timezone.utc)
         submission_serializer = StudentAssignmentCodeSubmissionPostSerializer(submission, data=submission_data)
-
 
     if submission_serializer.is_valid():
         assignment = Exercise.objects.get(id=assignment_id)
         # Check if the deadline has passed
-        if assignment.deadline < datetime.datetime.now(datetime.timezone.utc):
+        if assignment.deadline < timezone.now():
             return Response({"error": "The deadline has passed"}, status=status.HTTP_400_BAD_REQUEST)
         # Check if the student has reached the limit of attempts
         if submission and assignment.limit_of_attempts and assignment.limit_of_attempts < submission_data["quantity_of_submissions"]:
