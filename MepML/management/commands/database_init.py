@@ -68,6 +68,7 @@ class Command(BaseCommand):
         # Delete all built-in metrics from the database
         Metric.objects.filter(created_by=None).delete()
 
+        """
         # Create Professor
         user = User.objects.create_user(nmec=102534, name="Rafael Gonçalves", email="rfg@ua.pt")
         professor = Professor.objects.create(user=user)
@@ -86,6 +87,7 @@ class Command(BaseCommand):
         class_ = Class.objects.create(id=1, name="Class 1", image="image.png", created_by=professor)
         class_.students.add(student1)
         class_.students.add(student2)
+        """
 
         for metric in self.metrics:
             filename = f"metrics/{metric['title'].lower()}.py"
