@@ -391,6 +391,17 @@ class StudentResultCodeSubmissionSerializer(serializers.ModelSerializer):
         model = Result
         fields = '__all__'
 
+class ProfessorExerciseStudentCodeSubmissionSerializer(serializers.ModelSerializer):
+    code_submission_date = serializers.SerializerMethodField()
+
+    #format date
+    def get_code_submission_date(self, obj):
+        return obj.code_submission_date.strftime("%d/%m/%Y %H:%M:%S")
+    
+    class Meta:
+        model = CodeSubmission
+        fields = ["student", "file_name_code", "code_submission", "code_submission_date", "quantity_of_submissions"]
+
 
 # ------------------------------ Other Serializers ------------------------------ Tested
 
@@ -411,9 +422,12 @@ class ProfessorExerciseSerializer(serializers.Serializer):
     exercise = ExerciseSerializer()
     exercise_class_students = StudentSerializer(many=True)
     results = ProfessorExerciseResultSerializer(many=True)
+    student_codes = ProfessorExerciseStudentCodeSubmissionSerializer(many=True)
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
+
+        print("Inside ProfessorExerciseSerializer")
 
         results = []
 
@@ -425,6 +439,17 @@ class ProfessorExerciseSerializer(serializers.Serializer):
             # Order based on the metric order in the exercise
             student_results = sorted(student_results, key=lambda k: data['exercise']['metrics'].index(k['metric']))
 
+            # Get the student code
+            student_code = None
+            for i in data['student_codes']:
+                print("Checking student", student['id'], "code")
+                if i['student'] == student['id']:
+                    print("Found student code")
+                    student_code = data['student_codes'].pop(data['student_codes'].index(i))
+                    student_code.pop("student", None)
+                    break
+            
+
             results.append({
                 'student': student,
                 'results': [
@@ -433,7 +458,8 @@ class ProfessorExerciseSerializer(serializers.Serializer):
                     'score': i['score'],
                     }
                     for i in student_results
-                ]
+                ],
+                'code': student_code
             })
 
         for i in data["exercise"]["metrics"]:

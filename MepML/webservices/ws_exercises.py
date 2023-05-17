@@ -92,10 +92,10 @@ def post_exercise(request, prof_id):
 # @authentication_classes([TokenAuthentication])
 # @permission_classes([IsAuthenticated | IsGetRequest])
 def handle(request, prof_id=None):
-    #try:
-    if request.method == 'GET':
-        return get_exercises(request, prof_id)
-    elif request.method == 'POST':
-        return post_exercise(request, prof_id)
-    #except Exception as e:
-    #    return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        if request.method == 'GET':
+            return get_exercises(request, prof_id)
+        elif request.method == 'POST':
+            return post_exercise(request, prof_id)
+    except Exception as e:
+       return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
