@@ -1,7 +1,7 @@
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from MepML.serializers import ProfessorExerciseSerializer, ExercisePostSerializer
+from MepML.serializers import ProfessorExerciseSerializer, ExercisePostSerializer, ProfessorExerciseStudentCodeSubmissionSerializer, StudentAssignmentCodeSubmissionPostSerializer
 from MepML.models import Exercise, Dataset, Result, Class, Professor, CodeSubmission, Metric
 from django.core.files import File
 from django.core.files.storage import default_storage
@@ -15,10 +15,12 @@ def get_exercise(request, prof_id, exercise_id):
     ranking = Result.objects.filter(exercise=exercise_id).order_by('-score')
     class_ = exercise.students_class
     students = class_.students.all()
+    code_submissions = CodeSubmission.objects.filter(exercise=exercise_id)
     serializer = ProfessorExerciseSerializer(instance={
         'exercise': exercise,
         'exercise_class_students': students, 
-        'results': ranking
+        'results': ranking,
+        'student_codes': code_submissions,
     })
     return Response(serializer.data, status=status.HTTP_200_OK)
 
