@@ -9,6 +9,7 @@ class Command(BaseCommand):
     base_src = "def score(y_true, y_pred):\n"
 
     metrics = [
+        # Classification
         {
             "title": "Accuracy",
             "description": "(True positives + True negatives) / Total number of samples",
@@ -37,7 +38,30 @@ class Command(BaseCommand):
             "\t\treturn sklearn.metrics.f1_score(y_true, y_pred, average=\"weighted\", zero_division=0)\n" +
             "\telse:\n" +
             "\t\treturn sklearn.metrics.f1_score(y_true, y_pred)\n"
-        }
+        },
+        {
+            "title": "MCC",
+            "description": "Matthews Correlation Coefficient",
+            "src": base_src + "\treturn sklearn.metrics.matthews_corrcoef(y_true, y_pred)\n"
+        },
+
+        # Regression
+        {
+            "title": "MAE",
+            "description": "Mean absolute error",
+            "src": base_src + "\treturn sklearn.metrics.mean_absolute_error(y_true, y_pred)\n"
+        },
+        {
+            "title": "MSE",
+            "description": "Mean squared error",
+            "src": base_src + "\treturn sklearn.metrics.mean_squared_error(y_true, y_pred)\n"
+        },
+        {
+            "title": "R2",
+            "description": "Coefficient of determination - proportion of the variance " +
+            "in the dependent variable that is predictable from the independent variable(s)",
+            "src": base_src + "\treturn sklearn.metrics.r2_score(y_true, y_pred)\n"
+        },
     ]
 
     def handle(self, *args, **options):
