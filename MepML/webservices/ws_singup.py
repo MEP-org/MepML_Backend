@@ -30,12 +30,16 @@ def singup(request):
     except:
         pass
 
-    user = User.objects.create(
-        nmec=request.POST["nmec"], 
-        name=request.POST["name"], 
-        email=request.POST["email"],
-        firebase_uuid=pyromancer_id
-    )
+    if request.POST["user_type"] == "professor" or request.POST["user_type"] == "student":
+        user = User.objects.create(
+            nmec=request.POST["nmec"], 
+            name=request.POST["name"], 
+            email=request.POST["email"],
+            firebase_uuid=pyromancer_id
+        )
+    else:
+        return Response({"error": "user type is incorrect"}, status=status.HTTP_400_BAD_REQUEST)
+    
     if request.POST["user_type"] == "professor":
         Professor.objects.create(user=user)
         professor = Professor.objects.get(user__firebase_uuid=pyromancer_id)    
