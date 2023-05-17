@@ -17,7 +17,7 @@ Now you have 2 options:
 ### Running with local database
 `python3 manage.py makemigrations --settings=djangoMepML.development_settings`  
 `python3 manage.py migrate --run-syncdb --settings=djangoMepML.development_settings`  
-`python3 manage.py database_init --settings=djangoMepML.development_settings `
+`python3 manage.py database_init --settings=djangoMepML.development_settings `  
 `python3 manage.py runserver --settings=djangoMepML.development_settings`  
 
 ### Running with remote database

@@ -8,7 +8,6 @@ from MepML.models import Student
 
 def home(request, student_id):
     student = Student.objects.get(id=student_id)
-    print(student)
     serializer = StudentHomeSerializer(student)
     return Response(serializer.data, status=status.HTTP_200_OK)
 

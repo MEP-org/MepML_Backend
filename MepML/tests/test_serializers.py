@@ -7,8 +7,8 @@ from rest_framework.test import APIRequestFactory, APITestCase
 from rest_framework import status
 
 from MepML.models import CodeSubmission, Dataset, Exercise, Professor, Result, User, Student, Class, Metric
-from MepML.serializers import DatasetSerializer, ExercisePostSerializer, ExerciseSerializer, MetricOwnSerializer, MetricSerializer, \
-    MetricViewerSerializer, ProfessorClassPostSerializer, ProfessorClassSerializer, ProfessorClassesSerializer, ProfessorCreateExerciseGETSerializer, ProfessorExerciseResultSerializer, ProfessorExerciseSerializer, ProfessorExercisesExerciseSerializer, ProfessorExercisesSerializer, ProfessorMetricPostSerializer, ProfessorMetricsSerializer, ProfessorSerializer, PublicExerciseSerializer, PublicExercisesExerciseSerializer, PublicExercisesExerciseTrainingDatasetSerializer, PublicExercisesProfessorsSerializer, PublicExercisesSerializer, SimpleClassSerializer, StudentAssignmentCodeSubmissionSerializer, StudentAssignmentExerciseAndOwnResultsSerializer, StudentAssignmentExerciseDatasetSerializer, StudentAssignmentExerciseOwnResultsSerializer, StudentAssignmentExerciseSerializer, StudentAssignmentSerializer, StudentAssignmentsExerciseSerializer, StudentAssignmentsSerializer, StudentClassSerializer, StudentClassesSerializer, StudentHomeSerializer, UserSerializer, StudentSerializer
+from MepML.serializers import DatasetSerializer, ExercisePostSerializer, ExerciseSerializer, LoginUserSerializer, MetricOwnSerializer, MetricSerializer, \
+    MetricViewerSerializer, ProfessorClassPostSerializer, ProfessorClassSerializer, ProfessorClassesSerializer, ProfessorCreateExerciseGETSerializer, ProfessorExerciseResultSerializer, ProfessorExerciseSerializer, ProfessorExerciseStudentCodeSubmissionSerializer, ProfessorExercisesExerciseSerializer, ProfessorExercisesSerializer, ProfessorMetricPostSerializer, ProfessorMetricsSerializer, ProfessorSerializer, PublicExerciseSerializer, PublicExercisesExerciseSerializer, PublicExercisesExerciseTrainingDatasetSerializer, PublicExercisesProfessorsSerializer, PublicExercisesSerializer, SimpleClassSerializer, StudentAssignmentCodeSubmissionPostSerializer, StudentAssignmentCodeSubmissionSerializer, StudentAssignmentExerciseAndOwnResultsSerializer, StudentAssignmentExerciseDatasetSerializer, StudentAssignmentExerciseOwnResultsSerializer, StudentAssignmentExerciseSerializer, StudentAssignmentSerializer, StudentAssignmentsExerciseSerializer, StudentAssignmentsSerializer, StudentClassSerializer, StudentClassesSerializer, StudentHomeSerializer, StudentResultCodeSubmissionSerializer, UserSerializer, StudentSerializer
 
 
 from django.utils.timezone import make_aware
@@ -19,30 +19,30 @@ from django.utils.timezone import make_aware
 
 def fill_db(self):
     # Create Professor
-    self.user = User.objects.create(nmec=102931, name="Pedro Dias", email="pd@ua.pt")
+    self.user = User.objects.create(nmec=102931, name="Pedro Dias", email="pd@ua.pt", firebase_uuid="token")
     self.professor = Professor.objects.create(user=self.user)
 
     # Create Students
-    self.user1 = User.objects.create(nmec=102932, name="João Mário", email="jm@ua.pt")
+    self.user1 = User.objects.create(nmec=102932, name="João Mário", email="jm@ua.pt", firebase_uuid="token")
     self.student1 = Student.objects.create(user=self.user1)
 
-    self.user2 = User.objects.create(nmec=102933, name="Rafa Silva", email="rs@ua.pt")
+    self.user2 = User.objects.create(nmec=102933, name="Rafa Silva", email="rs@ua.pt", firebase_uuid="token")
     self.student2 = Student.objects.create(user=self.user2)
 
     # Create classes
-    self.class_ = Class.objects.create(id=1, name="Class 1", image="image.png", created_by=self.professor)
+    self.class_ = Class.objects.create(name="Class 1", image="image.png", created_by=self.professor)
     self.class_.students.add(self.student1)
     self.class_.students.add(self.student2)
 
-    self.class2 = Class.objects.create(id=2, name="Class 2", image="image2.png", created_by=self.professor)
+    self.class2 = Class.objects.create(name="Class 2", image="image2.png", created_by=self.professor)
     self.class2.students.add(self.student1)
 
     # Create Metric
-    self.metric1 = Metric.objects.create(id=1, title="Metric 1", description="Metric Description 1", metric_file="metrica1", created_by=self.professor)
-    self.metric2 = Metric.objects.create(id=2, title="Metric 2", description="Metric Description 2", metric_file="metrica2", created_by=self.professor)
+    self.metric1 = Metric.objects.create(title="Metric 1", description="Metric Description 1", metric_file="metrica1", created_by=self.professor)
+    self.metric2 = Metric.objects.create(title="Metric 2", description="Metric Description 2", metric_file="metrica2", created_by=self.professor)
 
     # Create Dataset
-    self.dataset = Dataset.objects.create(train_name="train", train_dataset="train_dataset", train_size=0, test_name="test", test_dataset="test_dataset", test_size=0)
+    self.dataset = Dataset.objects.create(train_name="train", train_dataset="train_dataset", train_size=0, test_name="test", test_dataset="test_dataset", test_size=0, test_line_quant=0, test_ground_truth_name="test_ground_truth_name", test_ground_truth_file="test_ground_truth_file")
 
     # Create Exercise
     self.exercise = Exercise.objects.create(
@@ -50,7 +50,7 @@ def fill_db(self):
                                     subtitle="Subtitle 1",
                                     description="DescriptionMD 1",
                                     evaluation="EvaluationMD 1",
-                                    deadline= make_aware(datetime.datetime(2099, 12, 10, 12, 0, 0)),
+                                    deadline= datetime.datetime(2099, 12, 10, 12, 0, 0),
                                     limit_of_attempts=3,
                                     visibility=False,
                                     students_class=self.class_,
@@ -65,7 +65,7 @@ def fill_db(self):
                                     subtitle="Subtitle 2",
                                     description="DescriptionMD 2",
                                     evaluation="EvaluationMD 2",
-                                    deadline= make_aware(datetime.datetime(2098, 12, 10, 12, 0, 0)),
+                                    deadline= datetime.datetime(2098, 12, 10, 12, 0, 0),
                                     limit_of_attempts=3,
                                     visibility=False,
                                     students_class=self.class_,
@@ -80,7 +80,7 @@ def fill_db(self):
                                     subtitle="Subtitle 3",
                                     description="DescriptionMD 3",
                                     evaluation="EvaluationMD 3",
-                                    deadline= make_aware(datetime.datetime(1994, 12, 10, 12, 0, 0)),
+                                    deadline= datetime.datetime(1994, 12, 10, 12, 0, 0),
                                     limit_of_attempts=3,
                                     visibility=False,
                                     students_class=self.class_,
@@ -106,14 +106,46 @@ class TestUserSerializer(APITestCase):
 
     def setUp(self):
         # Create User
-        self.user = User(nmec=102932, name="João Mário", email="jm@ua.pt")
+        fill_db(self)
 
     def test_user_serializer(self):
         # Serialize User
-        serializer = UserSerializer(self.user)
+        serializer = UserSerializer(self.user1)
 
         # Create expected data
         expected_data = {'email': 'jm@ua.pt', 'nmec': 102932, 'name': 'João Mário'}
+
+        # Assert
+        self.assertEqual(serializer.data, expected_data)
+
+
+# ------------------------------ Authentication Serializers ------------------------------
+class TestLoginUserSerializer(APITestCase):
+    
+    def setUp(self):
+        # Create User
+        fill_db(self)
+
+    
+    def test_login_student_serializer(self):
+        # Serialize User
+        LoginUserSerializer.Meta.model = Student
+        serializer = LoginUserSerializer(self.student1)
+
+        # Create expected data
+        expected_data = {'id': self.student1.id, 'token': self.student1.user.firebase_uuid, 'user_type': 'student', 'name': 'João Mário', 'email': 'jm@ua.pt', 'nmec': 102932}
+
+        # Assert
+        self.assertEqual(serializer.data, expected_data)
+    
+
+    def test_login_professor_serializer(self):
+        # Serialize User
+        LoginUserSerializer.Meta.model = Professor
+        serializer = LoginUserSerializer(self.professor)
+
+        # Create expected data
+        expected_data = {'id': self.professor.id, 'token': self.professor.user.firebase_uuid, 'user_type': 'professor', 'name': 'Pedro Dias', 'email': 'pd@ua.pt', 'nmec': 102931}
 
         # Assert
         self.assertEqual(serializer.data, expected_data)
@@ -425,6 +457,7 @@ class TestDatasetSerializer(APITestCase):
             'test_dataset': '/media/test_dataset',
             'test_upload_date': self.dataset.test_upload_date.strftime("%d/%m/%Y %H:%M:%S"),
             'test_size': 0,
+            'test_line_quant': 0,
         }
 
         # Assert
@@ -462,6 +495,7 @@ class TestDatasetSerializer(APITestCase):
             'test_dataset': '/media/test_dataset',
             'test_size': 0,
             'test_upload_date': self.dataset.test_upload_date.strftime("%d/%m/%Y %H:%M:%S"),
+            'test_line_quant': 0,
         }
 
         # Assert
@@ -508,6 +542,7 @@ class TestExerciseSerializer(APITestCase):
                 'test_dataset': '/media/test_dataset',
                 'test_size': 0,
                 'test_upload_date': self.dataset.test_upload_date.strftime("%d/%m/%Y %H:%M:%S"),
+                'test_line_quant': 0,
             },
             'created_by': {'id': self.professor.id, 'user': {'email': 'pd@ua.pt', 'nmec': 102931, 'name': 'Pedro Dias'}},
         }
@@ -527,8 +562,8 @@ class TestExerciseSerializer(APITestCase):
             'subtitle': 'Subtitle 1',
             'description': 'DescriptionMD 1',
             'evaluation': 'EvaluationMD 1',
-            'publish_date' : self.exercise.publish_date.isoformat()[:-6]+'Z',
-            'deadline': self.exercise.deadline.isoformat()[:-6]+'Z',
+            'publish_date' : self.exercise.publish_date.isoformat(),
+            'deadline': self.exercise.deadline.isoformat(),
             'limit_of_attempts': 3,
             'visibility': False,
             'metrics': [self.metric1.id],
@@ -611,6 +646,7 @@ class TestExerciseSerializer(APITestCase):
                 'test_dataset': '/media/test_dataset',
                 'test_size': 0,
                 'test_upload_date': self.dataset.test_upload_date.strftime("%d/%m/%Y %H:%M:%S"),
+                'test_line_quant': 0,
             },
         }
 
@@ -655,7 +691,7 @@ class TestExerciseSerializer(APITestCase):
                 'train_name': 'train',
                 'train_dataset': '/media/train_dataset',
                 'train_size': 0,
-                'train_upload_date': self.dataset.train_upload_date.strftime("%d/%m/%Y %H:%M:%S")
+                'train_upload_date': self.dataset.train_upload_date.strftime("%d/%m/%Y %H:%M:%S"),
                 },
         }
 
@@ -699,6 +735,24 @@ class TestResultSerializers(APITestCase):
 
         # Assert
         self.assertEqual(serializer.data, expected_data)
+    
+
+    def test_student_result_code_submission_serializer(self):
+        # Serialize
+        serializer = StudentResultCodeSubmissionSerializer(self.result1)
+        
+        # Create expected data
+        expected_data = {
+            'id': self.result1.id,
+            'score': 0.5,
+            'date': self.result1.date.isoformat(),
+            'student': self.student1.id,
+            'exercise': self.exercise.id,
+            'metric': self.metric1.id,
+        }
+
+        # Assert
+        self.assertEqual(serializer.data, expected_data)
 
 
 # ------------------------------ Test CodeSubmission Serializers ------------------------------
@@ -734,8 +788,46 @@ class TestCodeSubmissionSerializers(APITestCase):
         # Assert
         self.assertEqual(serializer.data, expected_data)
 
+    def test_student_assignment_code_submission_post_serializer(self):
+        # Serialize
+        serializer = StudentAssignmentCodeSubmissionPostSerializer(self.code_submission1)
+        
+        # Create expected data
+        expected_data = {
+            'id': self.code_submission1.id,
+            'file_name_result': 'result.py',
+            'result_submission': '/media/result.py',
+            'result_submission_date': self.code_submission1.result_submission_date.isoformat(),
+            'file_name_code': 'code.py',
+            'code_submission': '/media/code.py',
+            'code_submission_date': self.code_submission1.code_submission_date.isoformat(),
+            'quantity_of_submissions': 1,
+            'student': self.student1.id,
+            'exercise': self.exercise.id,
+        }
+
+        # Assert
+        self.assertEqual(serializer.data, expected_data)
+
     
-# ------------------------------ Test Other Serializers ------------------------------
+    def test_professor_exercise_student_code_submission_serializer(self):
+        # Serialize
+        serializer = ProfessorExerciseStudentCodeSubmissionSerializer(self.code_submission1)
+        
+        # Create expected data
+        expected_data = {
+            'student': self.student1.id,
+            'file_name_code': 'code.py',
+            'code_submission': '/media/code.py',
+            'code_submission_date': self.code_submission1.code_submission_date.strftime("%d/%m/%Y %H:%M:%S"),
+            'quantity_of_submissions': 1,
+        }
+
+        # Assert
+        self.assertEqual(serializer.data, expected_data)
+
+    
+# # ------------------------------ Test Other Serializers ------------------------------
 class TestOtherSerializers(APITestCase):
 
     def setUp(self):
@@ -778,7 +870,8 @@ class TestOtherSerializers(APITestCase):
         serializer = ProfessorExerciseSerializer(instance={
             'exercise': self.exercise,
             'exercise_class_students': [self.student1, self.student2],
-            'results': [self.result10, self.result1]  # This test uses unsorted results to check if it is sorted inside the serializer
+            'results': [self.result10, self.result1], # This test uses unsorted results to check if it is sorted inside the serializer
+            'student_codes': [self.code_submission1, self.code_submission2],
         }
         )
 
@@ -811,6 +904,7 @@ class TestOtherSerializers(APITestCase):
                     'test_dataset': '/media/test_dataset',
                     'test_upload_date': self.dataset.test_upload_date.strftime("%d/%m/%Y %H:%M:%S"),
                     'test_size':0,
+                    'test_line_quant': 0,
                 },
                 'created_by': {'id': self.professor.id, 'user': {'email': 'pd@ua.pt', 'nmec': 102931, 'name': 'Pedro Dias'}},
             },
@@ -820,15 +914,31 @@ class TestOtherSerializers(APITestCase):
                     'results': [
                         {'date': self.result1.date.strftime("%d/%m/%Y %H:%M:%S"), 'score': 0.5},
                                 ],
+                    'code': {
+                        'file_name_code': 'code.py',
+                        'code_submission': '/media/code.py',
+                        'code_submission_date': self.code_submission1.code_submission_date.strftime("%d/%m/%Y %H:%M:%S"),
+                        'quantity_of_submissions': 1,
+                    }
                 },
                 {
                     'student': {'id': self.student2.id, 'user': {'email': 'rs@ua.pt', 'nmec': 102933, 'name': 'Rafa Silva'}},
                     'results': [
                         {'date': self.result10.date.strftime("%d/%m/%Y %H:%M:%S"), 'score': 0.9},
                     ],
+                    'code': {
+                        'file_name_code': 'code.py',
+                        'code_submission': '/media/code.py',
+                        'code_submission_date': self.code_submission2.code_submission_date.strftime("%d/%m/%Y %H:%M:%S"),
+                        'quantity_of_submissions': 1,
+                    }
                 }
             ]
         }
+        
+        self.assertEqual(serializer.data['exercise'], expected_data['exercise'])
+        self.assertEqual(serializer.data['results'], expected_data['results'])
+
 
         # Assert
         self.assertEqual(serializer.data, expected_data)
@@ -934,6 +1044,7 @@ class TestOtherSerializers(APITestCase):
                     'test_dataset': '/media/test_dataset',
                     'test_size': 0,
                     'test_upload_date': self.dataset.test_upload_date.strftime("%d/%m/%Y %H:%M:%S"),
+                    'test_line_quant': 0,
                 },
             },
             'my_results': [
@@ -991,6 +1102,7 @@ class TestOtherSerializers(APITestCase):
                         'test_dataset': '/media/test_dataset',
                         'test_size': 0,
                         'test_upload_date': self.dataset.test_upload_date.strftime("%d/%m/%Y %H:%M:%S"),
+                        'test_line_quant': 0,
                         },
                 },
                 'my_results': [
