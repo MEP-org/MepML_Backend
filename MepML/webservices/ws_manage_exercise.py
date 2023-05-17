@@ -1,13 +1,12 @@
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from MepML.serializers import ProfessorExerciseSerializer, ExercisePostSerializer, ProfessorExerciseStudentCodeSubmissionSerializer, StudentAssignmentCodeSubmissionPostSerializer
-from MepML.models import Exercise, Dataset, Result, Class, Professor, CodeSubmission, Metric
+from MepML.serializers import ProfessorExerciseSerializer, ExercisePostSerializer
+from MepML.models import Exercise, Dataset, Result, CodeSubmission, Metric
 from django.core.files import File
 from django.core.files.storage import default_storage
 from MepML.utils.sandbox import Sandbox
 # from app.security import *
-import requests
 
 
 def get_exercise(request, prof_id, exercise_id):
