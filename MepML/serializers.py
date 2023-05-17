@@ -2,13 +2,13 @@ from rest_framework import serializers
 from MepML.models import CodeSubmission, Professor, Student, Class, Dataset, Metric, Exercise, User, Result
 
 
-# ------------------------------ User Serializers ------------------------------ Tested
+# ------------------------------ User Serializers ------------------------------
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('email', 'nmec', 'name')
 
-# ------------------------------ Authentication Serializers ------------------------------ Not Tested
+# ------------------------------ Authentication Serializers ------------------------------
 class LoginUserSerializer(serializers.ModelSerializer):
     token = serializers.SerializerMethodField()
     email = serializers.SerializerMethodField()
@@ -40,7 +40,7 @@ class LoginUserSerializer(serializers.ModelSerializer):
         model = None
         fields = ('id', 'token', 'user_type', 'name', 'email', 'nmec')
 
-# ------------------------------ Student Serializers ------------------------------ Tested
+# ------------------------------ Student Serializers ------------------------------
 class StudentSerializer(serializers.ModelSerializer):
     user = UserSerializer()
 
@@ -62,7 +62,7 @@ class StudentHomeSerializer(serializers.ModelSerializer):
         model = Student
         fields = ["num_exercises", "num_submissions", "next_deadline", "next_deadline_title", "last_ranking"]
 
-# ------------------------------ Professor Serializers ------------------------------ Tested
+# ------------------------------ Professor Serializers ------------------------------
 class ProfessorSerializer(serializers.ModelSerializer):
     user = UserSerializer()
 
@@ -82,7 +82,7 @@ class PublicExercisesProfessorsSerializer(serializers.ModelSerializer):
         fields = ('id', 'name')
 
 
-# ------------------------------ Class Serializers ------------------------------ Tested
+# ------------------------------ Class Serializers ------------------------------
 class ProfessorClassSerializer(serializers.ModelSerializer):
     students = StudentSerializer(many=True)
 
@@ -135,7 +135,7 @@ class SimpleClassSerializer(serializers.ModelSerializer):
         fields = ['id', "name"]
 
 
-# ------------------------------ Metric Serializers ------------------------------ Tested
+# ------------------------------ Metric Serializers ------------------------------
 class MetricSerializer(serializers.ModelSerializer):
     created_by = ProfessorSerializer()
 
@@ -164,7 +164,7 @@ class ProfessorMetricPostSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-# ------------------------------ Dataset Serializers ------------------------------ Tested
+# ------------------------------ Dataset Serializers ------------------------------
 class DatasetSerializer(serializers.ModelSerializer):
     train_upload_date = serializers.SerializerMethodField()
     test_upload_date = serializers.SerializerMethodField()
@@ -213,7 +213,7 @@ class StudentAssignmentExerciseDatasetSerializer(serializers.ModelSerializer):
                   "test_name", "test_dataset", "test_size", "test_upload_date", "test_line_quant"]
         
 
-# ------------------------------ Exercise Serializers ------------------------------ Tested
+# ------------------------------ Exercise Serializers ------------------------------
 class ExerciseSerializer(serializers.ModelSerializer):
     created_by = ProfessorSerializer()
     dataset = DatasetSerializer()
@@ -328,7 +328,7 @@ class PublicExerciseSerializer(serializers.ModelSerializer):
         
 
 
-# ------------------------------ Result Serializers ------------------------------ Tested
+# ------------------------------ Result Serializers ------------------------------
 class ProfessorExerciseResultSerializer(serializers.ModelSerializer):
     student = StudentSerializer()
     metric = MetricSerializer()
@@ -351,7 +351,12 @@ class StudentAssignmentExerciseOwnResultsSerializer(serializers.ModelSerializer)
         fields = ['metric', 'score']
 
 
-# ------------------------------ CodeSubmission Serializers ------------------------------ Tested
+class StudentResultCodeSubmissionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Result
+        fields = '__all__'
+
+# ------------------------------ CodeSubmission Serializers ------------------------------
 class StudentAssignmentCodeSubmissionSerializer(serializers.ModelSerializer):
     result_submission_date = serializers.SerializerMethodField()
     code_submission_date = serializers.SerializerMethodField()
@@ -386,10 +391,7 @@ class StudentAssignmentCodeSubmissionPostSerializer(serializers.ModelSerializer)
         fields = '__all__'
 
 
-class StudentResultCodeSubmissionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Result
-        fields = '__all__'
+
 
 class ProfessorExerciseStudentCodeSubmissionSerializer(serializers.ModelSerializer):
     code_submission_date = serializers.SerializerMethodField()
@@ -403,7 +405,7 @@ class ProfessorExerciseStudentCodeSubmissionSerializer(serializers.ModelSerializ
         fields = ["student", "file_name_code", "code_submission", "code_submission_date", "quantity_of_submissions"]
 
 
-# ------------------------------ Other Serializers ------------------------------ Tested
+# ------------------------------ Other Serializers ------------------------------
 
 class ProfessorMetricsSerializer(serializers.Serializer):
     my_metrics = MetricViewerSerializer(many=True)
