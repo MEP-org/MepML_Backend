@@ -13,11 +13,11 @@ RUN pip install --no-cache-dir --upgrade pip
 # run this command to install all dependencies  
 RUN pip install --no-cache-dir -r requirements.txt  
 
+COPY . . 
+
 RUN python3 manage.py makemigrations
 
 RUN python3 manage.py migrate
-
-COPY . .
 
 # port where the Django app runs  
 EXPOSE 8080  
