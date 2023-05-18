@@ -1,5 +1,4 @@
-from datetime import timezone
-from django.utils.timezone import make_aware
+from django.utils import timezone
 import datetime
 from django.db import models
 
@@ -51,7 +50,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
 
-    firebase_uuid = models.CharField(max_length=64)
+    firebase_uuid = models.CharField(max_length=64, default='userId')
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['nmec', 'name']
@@ -74,7 +73,7 @@ class Student(models.Model):
     @property
     def num_exercises(self):
         # Number of exercises that the student has to do in which the deadline has not passed
-        return Exercise.objects.filter(students_class__students=self, deadline__gt=datetime.datetime.now(timezone.utc)).count()
+        return Exercise.objects.filter(students_class__students=self, deadline__gt=timezone.now()).count()
 
     @property
     def num_submissions(self):
@@ -84,7 +83,7 @@ class Student(models.Model):
     @property
     def next_deadline(self):
         # Next deadline in which the deadline has not passed
-        next_deadline = Exercise.objects.filter(students_class__students=self, deadline__gt=datetime.datetime.now(timezone.utc)).order_by('deadline').first()
+        next_deadline = Exercise.objects.filter(students_class__students=self, deadline__gt=timezone.now()).order_by('deadline').first()
         if next_deadline is None:
             return None
         return next_deadline.deadline
@@ -92,7 +91,7 @@ class Student(models.Model):
     @property
     def next_deadline_title(self):
         # Next deadline in which the deadline has not passed
-        next_deadline = Exercise.objects.filter(students_class__students=self, deadline__gt=datetime.datetime.now(timezone.utc)).order_by('deadline').first()
+        next_deadline = Exercise.objects.filter(students_class__students=self, deadline__gt=timezone.now()).order_by('deadline').first()
         if next_deadline is None:
             return None
         return next_deadline.title

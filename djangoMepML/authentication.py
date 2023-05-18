@@ -17,9 +17,6 @@ def crate_new_pyromancer(email, password):
     }
     
     r = requests.post(BASE_URL+"signUp?key=" + FIREBASE_KEY, data=details)
-    print(r)
-    print()
-    print()
 
     return "error" in r.json(), r.json().get("localId")
 
@@ -32,8 +29,5 @@ def fire_in(email, password):
         'returnSecureToken': True
     }
     r = requests.post(BASE_URL + "signInWithPassword?key=" + FIREBASE_KEY, data=details)
-    print(r)
-    print()
-    print()
 
     return "error" in r.json(), r.json().get("localId")

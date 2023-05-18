@@ -60,6 +60,8 @@ def post_exercise(request, prof_id):
     data_ = request.data
     data_['dataset'] = dataset.id
     data_['created_by'] = prof_id
+    # Convert deadline with format dd/mm/yyyy to +1 day
+    data_['deadline'] = data_['deadline'] + " 23:59:59"
     serializer = ExercisePostSerializer(data=data_)
     if serializer.is_valid():
         serializer.save()
@@ -92,10 +94,10 @@ def post_exercise(request, prof_id):
 # @authentication_classes([TokenAuthentication])
 # @permission_classes([IsAuthenticated | IsGetRequest])
 def handle(request, prof_id=None):
-    #try:
-    if request.method == 'GET':
-        return get_exercises(request, prof_id)
-    elif request.method == 'POST':
-        return post_exercise(request, prof_id)
-    #except Exception as e:
-    #    return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        if request.method == 'GET':
+            return get_exercises(request, prof_id)
+        elif request.method == 'POST':
+            return post_exercise(request, prof_id)
+    except Exception as e:
+       return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)

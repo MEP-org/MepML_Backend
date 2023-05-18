@@ -2,12 +2,11 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from MepML.serializers import ProfessorExerciseSerializer, ExercisePostSerializer
-from MepML.models import Exercise, Dataset, Result, Class, Professor, CodeSubmission, Metric
+from MepML.models import Exercise, Dataset, Result, CodeSubmission, Metric
 from django.core.files import File
 from django.core.files.storage import default_storage
 from MepML.utils.sandbox import Sandbox
 # from app.security import *
-import requests
 
 
 def get_exercise(request, prof_id, exercise_id):
@@ -15,10 +14,12 @@ def get_exercise(request, prof_id, exercise_id):
     ranking = Result.objects.filter(exercise=exercise_id).order_by('-score')
     class_ = exercise.students_class
     students = class_.students.all()
+    code_submissions = CodeSubmission.objects.filter(exercise=exercise_id)
     serializer = ProfessorExerciseSerializer(instance={
         'exercise': exercise,
         'exercise_class_students': students, 
-        'results': ranking
+        'results': ranking,
+        'student_codes': code_submissions,
     })
     return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -66,6 +67,9 @@ def put_exercise(request, prof_id, exercise_id):
         dataset = Dataset.objects.get(id=data_['dataset'])
 
     existent_exercise = Exercise.objects.get(id=exercise_id)
+
+    if 'deadline' in data_.keys():
+        data_['deadline'] = data_['deadline'] + " 23:59:59"
     serializer = ExercisePostSerializer(existent_exercise, data=data_)
 
     if serializer.is_valid():

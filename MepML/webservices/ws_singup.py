@@ -9,15 +9,15 @@ from djangoMepML import authentication
 def singup(request):
     try:
         User.objects.get(nmec=request.POST["nmec"])
-        return Response({"error": "nmec exist"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"error": "nmec already exists"}, status=status.HTTP_400_BAD_REQUEST)
     except:
-        print("nmec exist")
+        pass
 
     try:
         User.objects.get(email=request.POST["email"])
-        return Response({"error": "email exist"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"error": "email already exists"}, status=status.HTTP_400_BAD_REQUEST)
     except:
-        print("email exists")
+        pass
 
     fire_state, pyromancer_id = authentication.crate_new_pyromancer(
                                 request.POST["email"], 
@@ -26,16 +26,20 @@ def singup(request):
     print(fire_state)
     try:
         User.objects.get(firebase_uuid=pyromancer_id)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response({"error": "Something went wrong"}, status=status.HTTP_400_BAD_REQUEST)
     except:
-        print("No student")
+        pass
 
-    user = User.objects.create(
-        nmec=request.POST["nmec"], 
-        name=request.POST["name"], 
-        email=request.POST["email"],
-        firebase_uuid=pyromancer_id
-    )
+    if request.POST["user_type"] == "professor" or request.POST["user_type"] == "student":
+        user = User.objects.create(
+            nmec=request.POST["nmec"], 
+            name=request.POST["name"], 
+            email=request.POST["email"],
+            firebase_uuid=pyromancer_id
+        )
+    else:
+        return Response({"error": "user type is incorrect"}, status=status.HTTP_400_BAD_REQUEST)
+    
     if request.POST["user_type"] == "professor":
         Professor.objects.create(user=user)
         professor = Professor.objects.get(user__firebase_uuid=pyromancer_id)    
