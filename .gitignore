@@ -10,8 +10,8 @@ venv/
 .idea/
 
 #ignore local database 
-.mydatabase
-mydatabase
+#.mydatabase
+#mydatabase
 
 #temp_files
 test_y.csv
