@@ -50,7 +50,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
 
-    firebase_uuid = models.CharField(max_length=64)
+    firebase_uuid = models.CharField(max_length=64, defualt='')
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['nmec', 'name']
