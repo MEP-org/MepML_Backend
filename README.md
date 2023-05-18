@@ -25,6 +25,6 @@ Now you have 2 options:
 
 ### IMPORTANT: Project branches
 
-```main```: production code.
+```main```: production code (when there is a new release)
 
 ```dev```: from which we will create feature branches.
