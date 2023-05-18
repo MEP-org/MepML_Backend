@@ -60,7 +60,7 @@ class StudentHomeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Student
-        fields = ["num_exercises", "num_submissions", "next_deadline", "next_deadline_title", "last_ranking"]
+        fields = ["num_exercises", "num_submissions", "next_deadline", "next_deadline_title"]
 
 # ------------------------------ Professor Serializers ------------------------------
 class ProfessorSerializer(serializers.ModelSerializer):
