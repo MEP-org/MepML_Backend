@@ -150,5 +150,18 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 AUTH_USER_MODEL = 'MepML.User'
 
-#FIREBASE_PATH = os.path.join(BASE_DIR, 'keys.json')
+#cloud storage
+from google.oauth2 import service_account
+from storages.backends.gcloud import GoogleCloudStorage
 
+STORAGES = {"default": {"BACKEND": "storages.backends.gcloud.GoogleCloudStorage"}}
+
+GS_BUCKET_NAME = 'mep_ml'
+
+MEDIA_URL = "https://console.cloud.google.com/storage/browser/mep_ml/"
+
+GS_CREDENTIALS = service_account.Credentials.from_service_account_file(
+    "storage-keys.json"
+)
+    
+GS_BLOB_CHUNK_SIZE = 1024 * 256 * 40 # Needed for uploading large streams, entirely optional otherwise

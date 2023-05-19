@@ -11,3 +11,4 @@ pandas
 requests
 mysqlclient
 python-dotenv
+django-storages[google]

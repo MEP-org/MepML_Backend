@@ -44,6 +44,7 @@ def post_exercise(request, prof_id):
     django_file_x = File(x_column_file)
     django_file_y = File(y_column_file)
 
+    print(request.FILES['train_dataset'].name, request.FILES['train_dataset'].size, django_file_x.size, django_file_x.name, test_line_quant, sep='\n')
     dataset = Dataset.objects.create(
         train_name = request.FILES['train_dataset'].name,
         train_dataset = request.FILES['train_dataset'],
@@ -55,11 +56,14 @@ def post_exercise(request, prof_id):
         test_ground_truth_file = django_file_y,
         test_line_quant = test_line_quant
     )
+    print("H1")
     x_column_file.close()
     y_column_file.close()
     data_ = request.data
     data_['dataset'] = dataset.id
     data_['created_by'] = prof_id
+
+    print("H2")
     # Convert deadline with format dd/mm/yyyy to +1 day
     data_['deadline'] = data_['deadline'] + " 23:59:59"
     serializer = ExercisePostSerializer(data=data_)
