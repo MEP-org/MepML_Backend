@@ -4,6 +4,8 @@ from rest_framework.response import Response
 from MepML.serializers import ProfessorExercisesSerializer, ExercisePostSerializer
 from MepML.models import Exercise, Class, Exercise, Dataset, Professor
 from django.core.files import File
+from django.core.files.uploadedfile import InMemoryUploadedFile
+import io
 import os
 from dotenv import load_dotenv
 load_dotenv()
@@ -42,28 +44,66 @@ def post_exercise(request, prof_id):
         x_column_file.write("".join(line.strip().split(",")[:-1]) + "\n")
         y_column_file.write(line.strip().split(",")[-1] + "\n")
     django_file_x = File(x_column_file)
-    django_file_y = File(y_column_file)
+    #django_file_y = File(y_column_file)
 
-    print(request.FILES['train_dataset'].name, request.FILES['train_dataset'].size, django_file_x.size, django_file_x.name, test_line_quant, sep='\n')
+    # Create an io.BytesIO object
+    bytes_io = io.BytesIO()
+    bytes_io.write(x_column_file.read().encode('utf-8'))
+    bytes_io.seek(0)
+
+    # Specify the desired filename and content type
+    filename = django_file_x.name
+    content_type = 'csv/plain'  # Replace with the appropriate content type
+
+    # Create the InMemoryUploadedFile object
+    django_file_xx = InMemoryUploadedFile(
+        file=bytes_io,
+        field_name=None,
+        name=filename,
+        content_type=content_type,
+        size=bytes_io.getbuffer().nbytes,
+        charset=None
+    )
+
+    bytes_io = io.BytesIO()
+    bytes_io.write(y_column_file.read().encode('utf-8'))
+    bytes_io.seek(0)
+
+    # Specify the desired filename and content type
+    filename = django_file_x.name
+    content_type = 'csv/plain'  # Replace with the appropriate content type
+
+    # Create the InMemoryUploadedFile object
+    django_file_yy = InMemoryUploadedFile(
+        file=bytes_io,
+        field_name=None,
+        name=filename,
+        content_type=content_type,
+        size=bytes_io.getbuffer().nbytes,
+        charset=None
+    )
+
+
+    print(type(django_file_xx), type(request.FILES['train_dataset']))
+
     dataset = Dataset.objects.create(
         train_name = request.FILES['train_dataset'].name,
         train_dataset = request.FILES['train_dataset'],
         train_size = request.FILES['train_dataset'].size,
         test_name = request.data['test_dataset'].name,
-        test_dataset = django_file_x,
+        test_dataset = django_file_xx,
         test_size = django_file_x.size,
         test_ground_truth_name = django_file_x.name,
-        test_ground_truth_file = django_file_y,
+        test_ground_truth_file = django_file_yy,
         test_line_quant = test_line_quant
     )
-    print("H1")
-    x_column_file.close()
-    y_column_file.close()
+    django_file_x.close()
+    #x_column_file.close()
+    #y_column_file.close()
     data_ = request.data
     data_['dataset'] = dataset.id
     data_['created_by'] = prof_id
 
-    print("H2")
     # Convert deadline with format dd/mm/yyyy to +1 day
     data_['deadline'] = data_['deadline'] + " 23:59:59"
     serializer = ExercisePostSerializer(data=data_)

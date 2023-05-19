@@ -85,15 +85,14 @@ WSGI_APPLICATION = 'djangoMepML.wsgi.application'
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 DATABASES = {
 
-     'default': {  
-         'ENGINE': 'django.db.backends.mysql',  
-         'NAME': 'my_mep_ml',  
-         'USER': 'root',  
-         'PASSWORD': 'mep_ml',  
-         'HOST': '34.170.116.176',  
-         'PORT': '3306'
-     },
-
+    'default': {  
+        'ENGINE': 'django.db.backends.mysql',  
+        'NAME': 'my_mep_ml',  
+        'USER': 'pi',  
+        'PASSWORD': 'mep_ml',  
+        'HOST': '34.175.63.88',  
+        'PORT': '3306'
+    },
 }
 
 # Media files (images, pdfs, etc.)
