@@ -196,7 +196,6 @@ class TestStudentSerializer(APITestCase):
             'num_submissions': 3,
             'next_deadline': datetime.datetime(2098, 12, 10, 12, 0, tzinfo=datetime.timezone.utc).strftime("%d/%m/%Y %H:%M:%S"),
             'next_deadline_title': 'Exercise 2',
-            'last_ranking': 1,
         }
 
         # Assert
