@@ -6,7 +6,9 @@ from MepML.models import Exercise, Dataset, Result, CodeSubmission, Metric
 from django.core.files import File
 from django.core.files.storage import default_storage
 from MepML.utils.sandbox import Sandbox
-# from app.security import *
+from django.core.files.uploadedfile import InMemoryUploadedFile
+import io
+import uuid
 
 
 def get_exercise(request, prof_id, exercise_id):
@@ -45,18 +47,58 @@ def put_exercise(request, prof_id, exercise_id):
             test_line_quant += 1
             x_column_file.write("".join(line.strip().split(",")[:-1]) + "\n")
             y_column_file.write(line.strip().split(",")[-1] + "\n")
-        django_file_x = File(x_column_file)
-        django_file_y = File(y_column_file)
+        #django_file_x = File(x_column_file)
+        #django_file_y = File(y_column_file)
+        x_column_file.seek(0)
+        y_column_file.seek(0)
+
+        # Create an io.BytesIO object
+        bytes_io_x = io.BytesIO()
+        bytes_io_x.write(x_column_file.read().encode('utf-8'))
+        bytes_io_x.seek(0)
+
+        # Specify the desired filename and content type
+        filename = request.FILES['test_dataset'].name
+        content_type = 'csv/plain'  # Replace with the appropriate content type
+
+        # Create the InMemoryUploadedFile object
+        django_file_xx = InMemoryUploadedFile(
+            file=bytes_io_x,
+            field_name=None,
+            name=filename,
+            content_type=content_type,
+            size=bytes_io_x.getbuffer().nbytes,
+            charset=None
+        )
+
+        bytes_io_y = io.BytesIO()
+        bytes_io_y.write(y_column_file.read().encode('utf-8'))
+        bytes_io_y.seek(0)
+
+        # Create the InMemoryUploadedFile object
+        django_file_yy = InMemoryUploadedFile(
+            file=bytes_io_y,
+            field_name=None,
+            name=filename,
+            content_type=content_type,
+            size=bytes_io_y.getbuffer().nbytes,
+            charset=None
+        )
+
+        this_uuid = uuid.uuid4()
+        request.FILES['train_dataset'].name = str(this_uuid) + request.FILES['train_dataset'].name
+        request.FILES['test_dataset'].name = str(this_uuid) + request.FILES['test_dataset'].name
+        django_file_xx.name = str(this_uuid) + django_file_xx.name
 
         dataset = Dataset.objects.create(
             train_name = request.FILES['train_dataset'].name,
             train_dataset = request.FILES['train_dataset'],
             train_size = request.FILES['train_dataset'].size,
             test_name = request.data['test_dataset'].name,
-            test_dataset = django_file_x,
-            test_size = django_file_x.size,
-            test_ground_truth_name = django_file_x.name,
-            test_ground_truth_file = django_file_y,
+            test_dataset = django_file_xx,
+            test_size = django_file_xx.size,
+            test_ground_truth_name = django_file_xx.name,
+            test_ground_truth_file = django_file_yy,
             test_line_quant = test_line_quant
         )
         x_column_file.close()

@@ -48,10 +48,6 @@ def post_exercise(request, prof_id):
     #go back to beginning of file
     x_column_file.seek(0)
     y_column_file.seek(0)
-    #django_file_x = File(x_column_file)
-    #django_file_y = File(y_column_file)
-
-    print("File name", request.FILES['test_dataset'].name)
     
     # Create an io.BytesIO object
     bytes_io_x = io.BytesIO()
@@ -60,7 +56,7 @@ def post_exercise(request, prof_id):
 
     # Specify the desired filename and content type
     filename = request.FILES['test_dataset'].name
-    content_type = 'csv/plain'  # Replace with the appropriate content type
+    content_type = 'csv/plain'
 
     # Create the InMemoryUploadedFile object
     django_file_xx = InMemoryUploadedFile(
@@ -76,10 +72,6 @@ def post_exercise(request, prof_id):
     bytes_io_y.write(y_column_file.read().encode('utf-8'))
     bytes_io_y.seek(0)
 
-    # Specify the desired filename and content type
-    #filename = request.FILES['test_dataset'].name
-    #content_type = 'csv/plain'  # Replace with the appropriate content type
-
     # Create the InMemoryUploadedFile object
     django_file_yy = InMemoryUploadedFile(
         file=bytes_io_y,
@@ -91,8 +83,6 @@ def post_exercise(request, prof_id):
     )
 
     this_uuid = uuid.uuid4()
-    print(this_uuid)
-
     request.FILES['train_dataset'].name = str(this_uuid) + request.FILES['train_dataset'].name
     request.FILES['test_dataset'].name = str(this_uuid) + request.FILES['test_dataset'].name
     django_file_xx.name = str(this_uuid) + django_file_xx.name
@@ -108,8 +98,6 @@ def post_exercise(request, prof_id):
         test_ground_truth_file = django_file_yy,
         test_line_quant = test_line_quant
     )
-    #django_file_x.close()
-    #django_file_y.close()
     x_column_file.close()
     y_column_file.close()
     
