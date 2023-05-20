@@ -91,6 +91,7 @@ class Command(BaseCommand):
 
         for metric in self.metrics:
             filename = f"metrics/{metric['title'].lower()}.py"
+            metric["src"] = metric["src"].encode("utf-8")
             content = ContentFile(metric["src"])
             if default_storage.exists(filename):
                 default_storage.delete(filename)

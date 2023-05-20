@@ -6,6 +6,7 @@ from MepML.serializers import StudentAssignmentSerializer, StudentAssignmentCode
 from MepML.models import Exercise, Result, Student, CodeSubmission
 from django.core.files.storage import default_storage
 import pandas as pd
+import uuid
 from MepML.utils.sandbox import Sandbox
 from django.utils import timezone
 # from app.security import *
@@ -34,6 +35,9 @@ def get_assignment(request, student_id, assignment_id):
 
 
 def post_solution(request, student_id, assignment_id):
+    new_uuid = uuid.uuid4()
+    request.FILES['result_submission'].name = str(new_uuid) + request.FILES['result_submission'].name
+    request.FILES['code_submission'].name = str(new_uuid) + request.FILES['code_submission'].name
     submission_data = request.data
     submission_data["student"] = student_id
     submission_data["exercise"] = assignment_id
@@ -83,7 +87,6 @@ def post_solution(request, student_id, assignment_id):
                 "score": score
             }
             scores[metric.title] = score
-
             if result:
                 result_serializer = StudentResultCodeSubmissionSerializer(result, data=result_data)
                 if not result_serializer.is_valid():

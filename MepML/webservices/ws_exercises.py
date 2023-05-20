@@ -6,6 +6,7 @@ from MepML.models import Exercise, Class, Exercise, Dataset, Professor
 from django.core.files import File
 from django.core.files.uploadedfile import InMemoryUploadedFile
 import io
+import uuid
 import os
 from dotenv import load_dotenv
 load_dotenv()
@@ -31,8 +32,8 @@ def post_exercise(request, prof_id):
     if 'quantity_of_attempts' in request.data and request.data['quantity_of_attempts'] <= 0:
         return Response({'error': 'Quantity of attempts must be greater than 0 or unlimited'}, status=status.HTTP_400_BAD_REQUEST)
 
-    x_column_file = open(request.FILES['test_dataset'].name, "w+")
-    y_column_file = open(request.FILES['test_dataset'].name[:-4] + "_y.csv", "w+")
+    x_column_file = open("test.csv", "w+")
+    y_column_file = open("test_y.csv", "w+")
     reading_header = True
     test_line_quant = 0
     for line in request.FILES['test_dataset']:
@@ -43,48 +44,58 @@ def post_exercise(request, prof_id):
         test_line_quant += 1
         x_column_file.write("".join(line.strip().split(",")[:-1]) + "\n")
         y_column_file.write(line.strip().split(",")[-1] + "\n")
-    django_file_x = File(x_column_file)
+    
+    #go back to beginning of file
+    x_column_file.seek(0)
+    y_column_file.seek(0)
+    #django_file_x = File(x_column_file)
     #django_file_y = File(y_column_file)
 
+    print("File name", request.FILES['test_dataset'].name)
+    
     # Create an io.BytesIO object
-    bytes_io = io.BytesIO()
-    bytes_io.write(x_column_file.read().encode('utf-8'))
-    bytes_io.seek(0)
+    bytes_io_x = io.BytesIO()
+    bytes_io_x.write(x_column_file.read().encode('utf-8'))
+    bytes_io_x.seek(0)
 
     # Specify the desired filename and content type
-    filename = django_file_x.name
+    filename = request.FILES['test_dataset'].name
     content_type = 'csv/plain'  # Replace with the appropriate content type
 
     # Create the InMemoryUploadedFile object
     django_file_xx = InMemoryUploadedFile(
-        file=bytes_io,
+        file=bytes_io_x,
         field_name=None,
         name=filename,
         content_type=content_type,
-        size=bytes_io.getbuffer().nbytes,
+        size=bytes_io_x.getbuffer().nbytes,
         charset=None
     )
 
-    bytes_io = io.BytesIO()
-    bytes_io.write(y_column_file.read().encode('utf-8'))
-    bytes_io.seek(0)
+    bytes_io_y = io.BytesIO()
+    bytes_io_y.write(y_column_file.read().encode('utf-8'))
+    bytes_io_y.seek(0)
 
     # Specify the desired filename and content type
-    filename = django_file_x.name
-    content_type = 'csv/plain'  # Replace with the appropriate content type
+    #filename = request.FILES['test_dataset'].name
+    #content_type = 'csv/plain'  # Replace with the appropriate content type
 
     # Create the InMemoryUploadedFile object
     django_file_yy = InMemoryUploadedFile(
-        file=bytes_io,
+        file=bytes_io_y,
         field_name=None,
         name=filename,
         content_type=content_type,
-        size=bytes_io.getbuffer().nbytes,
+        size=bytes_io_y.getbuffer().nbytes,
         charset=None
     )
 
+    this_uuid = uuid.uuid4()
+    print(this_uuid)
 
-    print(type(django_file_xx), type(request.FILES['train_dataset']))
+    request.FILES['train_dataset'].name = str(this_uuid) + request.FILES['train_dataset'].name
+    request.FILES['test_dataset'].name = str(this_uuid) + request.FILES['test_dataset'].name
+    django_file_xx.name = str(this_uuid) + django_file_xx.name
 
     dataset = Dataset.objects.create(
         train_name = request.FILES['train_dataset'].name,
@@ -92,14 +103,16 @@ def post_exercise(request, prof_id):
         train_size = request.FILES['train_dataset'].size,
         test_name = request.data['test_dataset'].name,
         test_dataset = django_file_xx,
-        test_size = django_file_x.size,
-        test_ground_truth_name = django_file_x.name,
+        test_size = django_file_xx.size,
+        test_ground_truth_name = django_file_xx.name,
         test_ground_truth_file = django_file_yy,
         test_line_quant = test_line_quant
     )
-    django_file_x.close()
-    #x_column_file.close()
-    #y_column_file.close()
+    #django_file_x.close()
+    #django_file_y.close()
+    x_column_file.close()
+    y_column_file.close()
+    
     data_ = request.data
     data_['dataset'] = dataset.id
     data_['created_by'] = prof_id

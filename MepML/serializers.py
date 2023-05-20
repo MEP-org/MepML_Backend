@@ -168,6 +168,8 @@ class ProfessorMetricPostSerializer(serializers.ModelSerializer):
 class DatasetSerializer(serializers.ModelSerializer):
     train_upload_date = serializers.SerializerMethodField()
     test_upload_date = serializers.SerializerMethodField()
+    train_name = serializers.SerializerMethodField()
+    test_name = serializers.SerializerMethodField()
 
     #format date
     def get_train_upload_date(self, obj):
@@ -176,6 +178,13 @@ class DatasetSerializer(serializers.ModelSerializer):
     #format date
     def get_test_upload_date(self, obj):
         return obj.test_upload_date.strftime("%d/%m/%Y %H:%M:%S")
+    
+    #format file name (36 is the size of uuid) 
+    def get_train_name(self, obj):
+        return obj.train_name[36:]
+    
+    def get_test_name(self, obj):
+        return obj.test_name[36:]
     
     class Meta:
         model = Dataset
@@ -362,6 +371,8 @@ class StudentAssignmentCodeSubmissionSerializer(serializers.ModelSerializer):
     code_submission_date = serializers.SerializerMethodField()
     result_submission_size = serializers.SerializerMethodField()
     code_submission_size = serializers.SerializerMethodField()
+    file_name_result = serializers.SerializerMethodField()
+    file_name_code = serializers.SerializerMethodField()
 
     #format date
     def get_result_submission_date(self, obj):
@@ -378,6 +389,14 @@ class StudentAssignmentCodeSubmissionSerializer(serializers.ModelSerializer):
     #Get file size
     def get_code_submission_size(self, obj):
         return obj.code_submission.size
+    
+    #Get file size
+    def get_file_name_result(self, obj):
+        return obj.file_name_result[36:]
+    
+    #Get file size
+    def get_file_name_code(self, obj):
+        return obj.file_name_code[36:]
     
     class Meta:
         model = CodeSubmission

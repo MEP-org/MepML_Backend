@@ -18,6 +18,9 @@ def get_metrics(request, prof_id):
 
 
 def post_metric(request, prof_id):
+    #prevent creation of default metrics
+    if request.data["title"] in ["Accuracy", "Precision", "Recall", "F1", "MCC", "MAE", "MSE", "R2"]:
+        return Response({"error": "metric cannot have that title"}, status=status.HTTP_400_BAD_REQUEST)
     data_ = request.data.copy()
     data_['created_by'] = prof_id
 
