@@ -4,7 +4,6 @@ from rest_framework.response import Response
 from MepML.serializers import LoginUserSerializer
 from MepML.models import Student, Professor, User
 from djangoMepML import authentication
-import random
 
 def singup(request):
     try:
@@ -19,18 +18,15 @@ def singup(request):
     except:
         pass
 
-    fire1, fire2 = authentication.crate_new_pyromancer(
+    fire_state, pyromancer_id = authentication.crate_new_pyromancer(
                                  request.POST["email"], 
                                  request.POST["password"]
     )
-    print(fire1, fire2)
-    return Response({"error": str(fire2)}, status=status.HTTP_400_BAD_REQUEST)
     try:
         User.objects.get(firebase_uuid=pyromancer_id)
         return Response({"error": "Something went wrong"}, status=status.HTTP_400_BAD_REQUEST)
     except:
         pass
-    fire_state, pyromancer_id = fire1, fire2#str(random.randint(1, 9999999999))
 
     if request.POST["user_type"] == "professor" or request.POST["user_type"] == "student":
         user = User.objects.create(
