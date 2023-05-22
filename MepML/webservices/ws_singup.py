@@ -24,12 +24,12 @@ def singup(request):
                                  request.POST["password"]
     )
     print(fire1, fire2)
-    # try:
-    #     User.objects.get(firebase_uuid=pyromancer_id)
-    #     return Response({"error": "Something went wrong"}, status=status.HTTP_400_BAD_REQUEST)
-    # except:
-    #     pass
-    fire_state, pyromancer_id = "success", str(random.randint(1, 9999999999))
+    try:
+        User.objects.get(firebase_uuid=pyromancer_id)
+        return Response({"error": "Something went wrong"}, status=status.HTTP_400_BAD_REQUEST)
+    except:
+        pass
+    fire_state, pyromancer_id = fire1, fire2#str(random.randint(1, 9999999999))
 
     if request.POST["user_type"] == "professor" or request.POST["user_type"] == "student":
         user = User.objects.create(
