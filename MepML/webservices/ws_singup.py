@@ -19,11 +19,11 @@ def singup(request):
     except:
         pass
 
-    # fire_state, pyromancer_id = authentication.crate_new_pyromancer(
-    #                             request.POST["email"], 
-    #                             request.POST["password"]
-    # )
-    # print(fire_state)
+    fire1, fire2 = authentication.crate_new_pyromancer(
+                                 request.POST["email"], 
+                                 request.POST["password"]
+    )
+    print(fire1, fire2)
     # try:
     #     User.objects.get(firebase_uuid=pyromancer_id)
     #     return Response({"error": "Something went wrong"}, status=status.HTTP_400_BAD_REQUEST)
