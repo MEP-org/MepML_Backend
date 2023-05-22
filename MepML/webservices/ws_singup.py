@@ -24,6 +24,7 @@ def singup(request):
                                  request.POST["password"]
     )
     print(fire1, fire2)
+    return Response({"error": str(fire2)}, status=status.HTTP_400_BAD_REQUEST)
     try:
         User.objects.get(firebase_uuid=pyromancer_id)
         return Response({"error": "Something went wrong"}, status=status.HTTP_400_BAD_REQUEST)
