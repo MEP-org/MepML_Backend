@@ -164,3 +164,5 @@ GS_CREDENTIALS = service_account.Credentials.from_service_account_file(
 )
     
 GS_BLOB_CHUNK_SIZE = 1024 * 256 * 40 # Needed for uploading large streams, entirely optional otherwise
+
+FILE_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024 # 10 Mb limit

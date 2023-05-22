@@ -194,10 +194,15 @@ class DatasetSerializer(serializers.ModelSerializer):
 
 class PublicExercisesExerciseTrainingDatasetSerializer(serializers.ModelSerializer):
     train_upload_date = serializers.SerializerMethodField()
+    train_name = serializers.SerializerMethodField()
 
     #format date
     def get_train_upload_date(self, obj):
         return obj.train_upload_date.strftime("%d/%m/%Y %H:%M:%S")
+    
+    #format file name (36 is the size of uuid) 
+    def get_train_name(self, obj):
+        return obj.train_name[36:]
     
     class Meta:
         model = Dataset
@@ -207,6 +212,8 @@ class PublicExercisesExerciseTrainingDatasetSerializer(serializers.ModelSerializ
 class StudentAssignmentExerciseDatasetSerializer(serializers.ModelSerializer):
     train_upload_date = serializers.SerializerMethodField()
     test_upload_date = serializers.SerializerMethodField()
+    train_name = serializers.SerializerMethodField()
+    test_name = serializers.SerializerMethodField()
 
     #format date
     def get_train_upload_date(self, obj):
@@ -215,6 +222,13 @@ class StudentAssignmentExerciseDatasetSerializer(serializers.ModelSerializer):
     #format date
     def get_test_upload_date(self, obj):
         return obj.test_upload_date.strftime("%d/%m/%Y %H:%M:%S")
+    
+    #format file name (36 is the size of uuid) 
+    def get_train_name(self, obj):
+        return obj.train_name[36:]
+    
+    def get_test_name(self, obj):
+        return obj.test_name[36:]
 
     class Meta:
         model = Dataset
