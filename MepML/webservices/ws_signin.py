@@ -6,16 +6,15 @@ from MepML.models import Student, Professor, User
 from djangoMepML import authentication
 
 def singin(request):
-    # fire_state, pyromancer_id = authentication.fire_in(
-    #         request.POST["email"], 
-    #         request.POST["password"]
-    #         )
-    # print(fire_state)
-    # try:
-    #     user = User.objects.get(firebase_uuid=pyromancer_id)
-    # except:
-    #     print("No such User")
-    #     return Response(status=status.HTTP_404_NOT_FOUND)
+    fire_state, pyromancer_id = authentication.fire_in(
+            request.POST["email"], 
+            request.POST["password"]
+            )
+    try:
+        user = User.objects.get(firebase_uuid=pyromancer_id)
+    except:
+        print("No such User")
+        return Response(status=status.HTTP_404_NOT_FOUND)
 
     # may be a student or a professor
     try:
