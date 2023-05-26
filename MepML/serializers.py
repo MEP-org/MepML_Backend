@@ -385,8 +385,8 @@ class StudentAssignmentCodeSubmissionSerializer(serializers.ModelSerializer):
     code_submission_date = serializers.SerializerMethodField()
     result_submission_size = serializers.SerializerMethodField()
     code_submission_size = serializers.SerializerMethodField()
-    file_name_result = serializers.SerializerMethodField()
-    file_name_code = serializers.SerializerMethodField()
+    # file_name_result = serializers.SerializerMethodField()
+    # file_name_code = serializers.SerializerMethodField()
 
     #format date
     def get_result_submission_date(self, obj):
@@ -403,14 +403,6 @@ class StudentAssignmentCodeSubmissionSerializer(serializers.ModelSerializer):
     #Get file size
     def get_code_submission_size(self, obj):
         return obj.code_submission.size
-    
-    #Get file size
-    def get_file_name_result(self, obj):
-        return obj.file_name_result[36:]
-    
-    #Get file size
-    def get_file_name_code(self, obj):
-        return obj.file_name_code[36:]
     
     class Meta:
         model = CodeSubmission

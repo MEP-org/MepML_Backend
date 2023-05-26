@@ -35,7 +35,7 @@ def get_all_public(request):
         exercises = exercises.filter(created_by = request.GET["prof"])
 
     if "max_size" in request.GET:
-        exercises = exercises.filter(dataset__in= Dataset.objects.filter(train_size__lte=request.GET["max_size"]))
+        exercises = exercises.filter(dataset__in= Dataset.objects.filter(train_size__lte=(request.GET["max_size"] * 1024)))
 
     if "min_size" in request.GET:
         exercises = exercises.filter(dataset__in= Dataset.objects.filter(train_size__gte=request.GET["min_size"]))
