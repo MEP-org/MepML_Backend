@@ -90,7 +90,7 @@ DATABASES = {
         'NAME': 'my_mep_ml',  
         'USER': 'pi',  
         'PASSWORD': 'mep_ml',  
-        'HOST': '34.175.63.88',  
+        'HOST': '34.170.116.176',  
         'PORT': '3306'
     },
 }
@@ -153,7 +153,9 @@ AUTH_USER_MODEL = 'MepML.User'
 from google.oauth2 import service_account
 from storages.backends.gcloud import GoogleCloudStorage
 
-STORAGES = {"default": {"BACKEND": "storages.backends.gcloud.GoogleCloudStorage"}}
+STORAGES = {"default": {"BACKEND": "storages.backends.gcloud.GoogleCloudStorage"}, 
+            "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"}
+            }
 
 GS_BUCKET_NAME = 'mep_ml'
 
